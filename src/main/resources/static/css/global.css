@@ -68,6 +68,7 @@ footer .company-info li {
 .main .container {
 	background: #fff;
 	padding: 20px;
+	min-height: 320px;
 }
 
 i {
@@ -142,4 +143,8 @@ a:hover {
 em {
 	font-style: normal;
 	color: red;
+}
+
+.notfound{
+	text-align: center;
 }

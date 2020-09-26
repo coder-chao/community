@@ -123,7 +123,7 @@
 				
 				<!-- 私信列表 -->
 				<ul class="list-unstyled">
-					<li class="media pb-3 pt-3 mb-3 border-bottom position-relative" th:each="map:${conversations}">
+					<li class="media pb-3 pt-3 mb-3 border-bottom position-relative" th:if="not ${#lists.isEmpty(conversations)}" th:each="map:${conversations}">
 						<span class="badge badge-danger" th:text="${map.unreadCount}" th:if="${map.unreadCount!=0}">3</span>
 						<a href="profile.html">
 							<img  th:src="${map.target.headerUrl}" class="mr-4 rounded-circle user-header" alt="用户头像" >
@@ -141,6 +141,7 @@
 							</div>
 						</div>
 					</li>
+					<li class="notfound" th:if="${#lists.isEmpty(conversations)}" >您还没有私信过别人哦！</li>
 				</ul>
 				<!-- 分页 -->
 				<nav class="mt-5" th:replace="index::pagination">

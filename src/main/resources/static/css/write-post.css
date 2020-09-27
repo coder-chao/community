@@ -1,0 +1,45 @@
+.post-title{
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding-left: 8px;
+    width: 100%;
+    position: relative;
+    margin-bottom: 10px;
+}
+.shurukuang{
+    border-color: initial;
+    outline-color: initial;
+    box-shadow: none;
+    color: rgb(180, 173, 163);
+    overflow: hidden!important;
+    resize: none;
+    display: block;
+    width: 100%;
+    border: 0;
+    font-weight: 600;
+    font-synthesis: style;
+    outline: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    overflow: auto;
+    font-size: 20px;
+    color: #4e5158;
+    height: 34px;
+    line-height: 38px;
+    padding-right: 32px;
+}
+.publish{
+    background-color: rgb(154, 24, 38);
+    color: rgb(232, 230, 227);
+    display: inline-block;
+    width: 128px;
+    height: 36px;
+    margin-top: 10px;
+    background-color: #c01e2f;
+    border-radius: 2px;
+    font-size: 14px;
+    color: #fff;
+    line-height: 36px;
+    text-align: center;
+    cursor: pointer;
+}

@@ -19,7 +19,9 @@ body {
 	width: 960px;
 	padding: 0;
 }
-
+.sticky-top{
+	z-index: 999999;
+}
 header .navbar-brand {
 	background: url('http://static.nowcoder.com/images/res/logo/logo-v3.png') no-repeat;
 	background-size: 147px 42px;

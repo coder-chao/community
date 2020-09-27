@@ -70,10 +70,10 @@
 							<a class="nav-link" th:href="@{|/user/profile/${userId}|}">个人信息</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link active" th:href="@{|/user/profile/${userId}/post|}">我的帖子</a>
+							<a class="nav-link active" th:href="@{|/user/profile/${userId}/post|}">发布的帖子</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" th:href="@{|/user/profile/${userId}/reply|}">我的回复</a>
+							<a class="nav-link" th:href="@{|/user/profile/${userId}/reply|}">发布的回复</a>
 						</li>
 					</ul>
 <!--					<a href="profile.html" class="text-muted position-absolute rt-0">返回个人主页&gt;</a>-->
@@ -93,7 +93,7 @@
 								回复于 <b th:text="${#dates.format(map.comment.createTime,'yyyy-MM-dd HH:mm:ss')}">2019-04-15 10:10:10</b>
 							</div>
 						</li>
-						<li class="notfound" th:if="${#lists.isEmpty(comments)}">您还没有回复哦！</li>
+						<li class="notfound" th:if="${#lists.isEmpty(comments)}">TA还没有发布过回复哦！</li>
 
 					</ul>
 					<!-- 分页 -->

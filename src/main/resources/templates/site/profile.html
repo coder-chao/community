@@ -70,10 +70,10 @@
 							<a class="nav-link active" th:href="@{|/user/profile/${user.id}|}">个人信息</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" th:href="@{|/user/profile/${user.id}/post|}">我的帖子</a>
+							<a class="nav-link" th:href="@{|/user/profile/${user.id}/post|}">发布的帖子</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" th:href="@{|/user/profile/${user.id}/reply|}">我的回复</a>
+							<a class="nav-link" th:href="@{|/user/profile/${user.id}/reply|}">发布的回复</a>
 						</li>
 					</ul>
 					<button type="button" th:if="${loginUser!=null&&loginUser.id!=user.id}" class="btn btn-primary btn-sm position-absolute rt-0" data-toggle="modal" data-target="#sendModal">发TA私信</button>

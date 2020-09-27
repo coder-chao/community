@@ -217,4 +217,5 @@ public class DiscussPostController implements CommunityConstant {
         return CommunityUtil.getJSONString(0);
     }
 
+
 }

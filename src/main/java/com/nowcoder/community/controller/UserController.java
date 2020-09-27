@@ -1,10 +1,11 @@
 package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
+import com.nowcoder.community.entity.Comment;
+import com.nowcoder.community.entity.DiscussPost;
+import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
-import com.nowcoder.community.service.FollowService;
-import com.nowcoder.community.service.LikeService;
-import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.service.*;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
@@ -28,6 +29,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -55,6 +60,12 @@ public class UserController implements CommunityConstant {
 
     @Autowired
     private FollowService followService;
+
+    @Autowired
+    private DiscussPostService discussPostService;
+
+    @Autowired
+    private CommentService commentService;
 
     /*@Value("${qiniu.key.access}")
     private String accessKey;
@@ -191,7 +202,73 @@ public class UserController implements CommunityConstant {
     }
 
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
-    public String setting(){
+    public String setting() {
         return "/site/setting";
+    }
+
+    @RequestMapping(path = "/profile/{userId}/post", method = RequestMethod.GET)
+    public String getDiscuss(@PathVariable("userId") int userId, Page page, Model model) {
+        if (userId == 0) {
+            return "redirect:index";
+        }
+        page.setRows(discussPostService.findDiscussPostRows(userId));
+        page.setPath("/user/profile/" + userId + "/post");
+
+        List<DiscussPost> list = discussPostService
+                .findDiscussPosts(userId, page.getOffset(), page.getLimit(), 0);
+        List<Map<String, Object>> discussPosts = new ArrayList<>();
+        if (list != null) {
+            for (DiscussPost post : list) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("post", post);
+                map.put("commentCount", post.getCommentCount());
+
+                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId());
+                map.put("likeCount", likeCount);
+
+                discussPosts.add(map);
+            }
+        }
+        model.addAttribute("discussPosts", discussPosts);
+
+        return "/site/my-post";
+    }
+
+    @RequestMapping(path = "/profile/{userId}/reply", method = RequestMethod.GET)
+    public String getReply(@PathVariable("userId") int userId, Page page, Model model) {
+        if (userId == 0) {
+            return "redirect:index";
+        }
+        page.setRows(commentService.findCommentCountByUserId(userId));
+        page.setPath("/user/profile/" + userId + "/reply");
+        List<Comment> list = commentService
+                .findCommentByUserId(userId, page.getOffset(), page.getLimit());
+
+        List<Map<String, Object>> comments = new ArrayList<>();
+        if (list != null) {
+            for (Comment comment : list) {
+                Map<String, Object> map = new HashMap<>();
+
+                map.put("comment", comment);
+                //根据回复内容判断是帖子的回复还是评论的回复
+                int entityType = comment.getEntityType();
+                int entityId = comment.getEntityId();
+                DiscussPost post = null;
+                if (entityType == ENTITY_TYPE_POST) {
+                    post = discussPostService.findDiscussPostById(entityId);
+                } else if (entityType == ENTITY_TYPE_COMMENT) {
+                    Comment reply = commentService.findCommentById(entityId);
+                    post = discussPostService.findDiscussPostById(reply.getEntityId());
+                }
+                map.put("target", post);
+//                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_COMMENT, comment.getId());
+//                map.put("likeCount", likeCount);
+
+                comments.add(map);
+            }
+        }
+        model.addAttribute("comments", comments);
+
+        return "/site/my-reply";
     }
 }

@@ -58,3 +58,11 @@ function publish() {
         }
     );
 }
+
+function inputFocus() {
+    var position = $("#editor").offset();
+    position.top = position.top-215;
+    $("html,body").animate({scrollTop:position.top}, 100);
+    //获取富文本编辑器的焦点
+    editor.$textElem.focus()
+}

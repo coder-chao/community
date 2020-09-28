@@ -82,7 +82,7 @@
 				</h6>
 				<!-- 作者 -->
 				<div class="media pb-3 border-bottom">
-					<a href="profile.html">
+					<a th:href="@{|/user/profile/${user.id}|}">
 						<img th:src="${user.headerUrl}" class="align-self-start mr-4 rounded-circle user-header" alt="用户头像" >
 					</a>
 					<div class="media-body">
@@ -100,7 +100,7 @@
 							</ul>
 						</div>
 					</div>
-				</div>	
+				</div>
 				<!-- 正文 -->
 				<div class="mt-4 mb-3 content" th:utext="${post.content}">
 					金三银四的金三已经到了，你还沉浸在过年的喜悦中吗？
@@ -125,7 +125,7 @@
 				<!-- 回帖列表 -->
 				<ul class="list-unstyled mt-4">
 					<li class="media pb-3 pt-3 mb-3 border-bottom" th:each="cvo:${comments}">
-						<a href="profile.html">
+						<a th:href="@{|/user/profile/${cvo.user.id}|}">
 							<img th:src="${cvo.user.headerUrl}" class="align-self-start mr-4 rounded-circle user-header" alt="用户头像" >
 						</a>
 						<div class="media-body">
@@ -147,11 +147,12 @@
 										</a>
 									</li>
 									<li class="d-inline ml-2">|</li>
-									<li class="d-inline ml-2"><a href="#" class="text-primary">回复(<i th:text="${cvo.replyCount}">2</i>)</a></li>
+									<!--(<i th:text="${cvo.replyCount}">2</i>)-->
+									<li class="d-inline ml-2"><a href="javascript:;" class="text-primary" onclick="inputFocus()">回复</a></li>
 								</ul>
 							</div>
 							<!-- 回复列表 -->
-							<ul class="list-unstyled mt-4 bg-gray p-3 font-size-12 text-muted">
+							<ul class="list-unstyled mt-4 bg-gray p-3 font-size-12 text-muted" th:if="${not#lists.isEmpty(cvo.replys)}">
 
 								<li class="pb-3 pt-3 mb-3 border-bottom" th:each="rvo:${cvo.replys}">
 									<div>
@@ -188,22 +189,22 @@
 												</div>
 											</form>
 										</div>
-									</div>								
+									</div>
 								</li>
 
 								<!-- 回复输入框 -->
-								<li class="pb-3 pt-3">
-									<form method="post" th:action="@{|/comment/add/${post.id}|}">
-										<div>
-											<input type="text" class="input-size" name="content" placeholder="请输入你的观点"/>
-											<input type="hidden" name="entityType" value="2">
-											<input type="hidden" name="entityId" th:value="${cvo.comment.id}">
-										</div>
-										<div class="text-right mt-2">
-											<button type="submit" class="btn btn-primary btn-sm" onclick="#">&nbsp;&nbsp;回&nbsp;&nbsp;复&nbsp;&nbsp;</button>
-										</div>
-									</form>
-								</li>
+<!--								<li class="pb-3 pt-3">-->
+<!--									<form method="post" th:action="@{|/comment/add/${post.id}|}">-->
+<!--										<div>-->
+<!--											<input type="text" class="input-size" name="content" placeholder="请输入你的观点"/>-->
+<!--											<input type="hidden" name="entityType" value="2">-->
+<!--											<input type="hidden" name="entityId" th:value="${cvo.comment.id}">-->
+<!--										</div>-->
+<!--										<div class="text-right mt-2">-->
+<!--											<button type="submit" class="btn btn-primary btn-sm" onclick="#">&nbsp;&nbsp;回&nbsp;&nbsp;复&nbsp;&nbsp;</button>-->
+<!--										</div>-->
+<!--									</form>-->
+<!--								</li>-->
 							</ul>
 						</div>
 					</li>
@@ -221,7 +222,7 @@
 						<li class="page-item"><a class="page-link" href="#">下一页</a></li>
 						<li class="page-item"><a class="page-link" href="#">末页</a></li>
 					</ul>
-				</nav>			
+				</nav>
 			</div>
 			<!-- 回帖输入 -->
 <!--			<div class="container mt-3">-->

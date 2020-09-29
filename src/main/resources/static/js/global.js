@@ -32,3 +32,11 @@ window.alert = function(message) {
 	$(".alert-box .modal-body p").text(message);
 	$(".alert-box").modal("show");
 }
+
+// 不自动更新
+// var timeagoInstance = timeago();// 实例
+// var time = timeagoInstance.format('2018-03-2 17:13:00','zh_CN');
+
+// 自动更新
+var timeagoInstance = timeago();// 实例
+timeagoInstance.render(document.querySelectorAll('.time'),'zh_CN');

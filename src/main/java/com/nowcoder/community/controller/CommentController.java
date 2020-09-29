@@ -13,10 +13,7 @@ import com.nowcoder.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -118,4 +115,9 @@ public class CommentController implements CommunityConstant {
         return CommunityUtil.getJSONString(0, "发布成功!");
     }
 
+    @GetMapping("/{commentId}/{offset}/{limit}")
+    public String getReplys(@PathVariable("commentId") int commentId,@PathVariable("offset") int offset,@PathVariable("limit") int limit){
+
+        return CommunityUtil.getJSONString(0, "回复获取成功!");
+    }
 }

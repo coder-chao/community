@@ -126,6 +126,13 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
+		<!--日期格式化-->
+		<!--<dependency>
+			<groupId>org.ocpsoft.prettytime</groupId>
+			<artifactId>prettytime</artifactId>
+			<version>4.0.0.Final</version>
+		</dependency>-->
+
 	</dependencies>
 
 	<build>

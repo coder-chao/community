@@ -87,3 +87,41 @@
 //     // console.log(targetId)
 //     // console.log(postId)
 // }
+// var replyList = $(".reply-list")
+// // console.log(replyList)
+// for (let i = 0; i < replyList.length; i++) {
+//     replyList[i].index = i
+// }
+// console.log($(".reply-list[index='0']"))
+var btns = $(".zhebtn")
+// console.log(btns.length)
+var statusArray = new Array(btns.length).fill(false)
+
+for (let i = 0; i < btns.length; i++) {
+    $(".zhebtn:eq("+i+")").on("click",function(){
+        // console.log($(".reply-list[index='0']"))
+        // console.log(i)
+        // $(".reply-list[index="+i+"]").slideToggle(500);
+        // replyList[i].slideToggle(500);
+        // $(".zhebtn:eq("+i+")").innerText("展开以下回复")
+        // console.log($(".zhebtn:eq("+i+")").html("展开以下回复"))
+        statusArray[i] = !statusArray[i]
+        if (statusArray[i]){
+        $(".zhebtn:eq("+i+")").html("展开以下回复")
+
+        }else {
+            $(".zhebtn:eq("+i+")").html("折叠以下回复")
+
+        }
+        if($(".reply-list:eq("+i+")").css('display')=='none') {
+            $(".reply-list:eq("+i+")").slideDown()
+        }else{
+            $(".reply-list:eq("+i+")").slideUp();
+            setTimeout(function(){$(".reply-list:eq("+i+")").css('display','none')},350);
+        }
+        // $(".reply-list:eq("+i+")").slideToggle(500);
+    });
+
+}
+
+

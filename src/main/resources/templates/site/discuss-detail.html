@@ -152,6 +152,10 @@
                         <div class="mt-4 text-muted font-size-12">
                             <span>发布于 <b th:text="${#dates.format(cvo.comment.createTime,'yyyy-MM-dd HH:mm:ss')}">2019-04-15 15:32:18</b></span>
                             <ul class="d-inline float-right">
+                                <li class="d-inline ml-2" th:if="${not#lists.isEmpty(cvo.replys)}">
+                                    <a href="javascript:;" class="text-primary zhebtn">折叠以下回复</a>
+                                </li>
+                                <li class="d-inline ml-2" th:if="${not#lists.isEmpty(cvo.replys)}">|</li>
                                 <li class="d-inline ml-2">
                                     <a href="javascript:;"
                                        th:onclick="|like(this,2,${cvo.comment.id},${cvo.comment.userId},${post.id});|"
@@ -168,7 +172,7 @@
                             </ul>
                         </div>
                         <!-- 回复列表 -->
-                        <ul class="list-unstyled mt-4 bg-gray p-3 font-size-12 text-muted"
+                        <ul class="list-unstyled mt-4 bg-gray p-3 font-size-12 text-muted reply-list"
                             th:if="${not#lists.isEmpty(cvo.replys)}">
 
                             <li class="pb-3 pt-3 mb-3 border-bottom" th:each="rvo:${cvo.replys}">

@@ -115,6 +115,7 @@ public class CommentController implements CommunityConstant {
         return CommunityUtil.getJSONString(0, "发布成功!");
     }
 
+    //TODO
     @GetMapping("/{commentId}/{offset}/{limit}")
     public String getReplys(@PathVariable("commentId") int commentId,@PathVariable("offset") int offset,@PathVariable("limit") int limit){
 

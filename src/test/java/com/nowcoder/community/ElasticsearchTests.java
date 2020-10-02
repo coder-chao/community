@@ -46,23 +46,8 @@ public class ElasticsearchTests {
     private ElasticsearchTemplate elasticTemplate;
 
     @Test
-    public void testInsert() {
-        discussRepository.save(discussMapper.selectDiscussPostById(241));
-        discussRepository.save(discussMapper.selectDiscussPostById(242));
-        discussRepository.save(discussMapper.selectDiscussPostById(243));
-    }
-
-    @Test
     public void testInsertList() {
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(101, 0, 100, 0));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(102, 0, 100, 0));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(103, 0, 100, 0));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(111, 0, 100, 0));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(112, 0, 100, 0));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(131, 0, 100, 0));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(132, 0, 100, 0));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(133, 0, 100, 0));
-        discussRepository.saveAll(discussMapper.selectDiscussPosts(134, 0, 100, 0));
+        discussRepository.saveAll(discussMapper.selectAllDiscussPosts());
     }
 
     @Test
@@ -81,14 +66,14 @@ public class ElasticsearchTests {
     @Test
     public void testSearchByRepository() {
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.multiMatchQuery("互联网寒冬", "title", "content"))
+                .withQuery(QueryBuilders.multiMatchQuery("新人", "title", "content"))
                 .withSort(SortBuilders.fieldSort("type").order(SortOrder.DESC))
                 .withSort(SortBuilders.fieldSort("score").order(SortOrder.DESC))
                 .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
                 .withPageable(PageRequest.of(0, 10))
                 .withHighlightFields(
                         new HighlightBuilder.Field("title").preTags("<em>").postTags("</em>"),
-                        new HighlightBuilder.Field("content").preTags("<em>").postTags("</em>")
+                        new HighlightBuilder.Field("contentText").preTags("<em>").postTags("</em>")
                 ).build();
 
         // elasticTemplate.queryForPage(searchQuery, class, SearchResultMapper)
@@ -107,14 +92,14 @@ public class ElasticsearchTests {
     @Test
     public void testSearchByTemplate() {
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.multiMatchQuery("互联网寒冬", "title", "content"))
+                .withQuery(QueryBuilders.multiMatchQuery("劫", "title", "contentText"))
                 .withSort(SortBuilders.fieldSort("type").order(SortOrder.DESC))
                 .withSort(SortBuilders.fieldSort("score").order(SortOrder.DESC))
                 .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
                 .withPageable(PageRequest.of(0, 10))
                 .withHighlightFields(
                         new HighlightBuilder.Field("title").preTags("<em>").postTags("</em>"),
-                        new HighlightBuilder.Field("content").preTags("<em>").postTags("</em>")
+                        new HighlightBuilder.Field("contentText").preTags("<em>").postTags("</em>")
                 ).build();
 
         Page<DiscussPost> page = elasticTemplate.queryForPage(searchQuery, DiscussPost.class, new SearchResultMapper() {
@@ -138,8 +123,8 @@ public class ElasticsearchTests {
                     String title = hit.getSourceAsMap().get("title").toString();
                     post.setTitle(title);
 
-                    String content = hit.getSourceAsMap().get("content").toString();
-                    post.setContent(content);
+                    String contentText = hit.getSourceAsMap().get("contentText").toString();
+                    post.setContentText(contentText);
 
                     String status = hit.getSourceAsMap().get("status").toString();
                     post.setStatus(Integer.valueOf(status));
@@ -156,9 +141,9 @@ public class ElasticsearchTests {
                         post.setTitle(titleField.getFragments()[0].toString());
                     }
 
-                    HighlightField contentField = hit.getHighlightFields().get("content");
+                    HighlightField contentField = hit.getHighlightFields().get("contentText");
                     if (contentField != null) {
-                        post.setContent(contentField.getFragments()[0].toString());
+                        post.setContentText(contentField.getFragments()[0].toString());
                     }
 
                     list.add(post);

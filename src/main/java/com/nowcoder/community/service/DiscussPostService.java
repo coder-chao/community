@@ -114,7 +114,7 @@ public class DiscussPostService {
 //        post.setContent(HtmlUtils.htmlEscape(post.getContent()));
         // 过滤敏感词
         post.setTitle(sensitiveFilter.filter(post.getTitle()));
-        post.setContent(sensitiveFilter.filter(post.getContent()));
+        post.setContentText(sensitiveFilter.filter(post.getContentText()));
 
         return discussPostMapper.insertDiscussPost(post);
     }
@@ -139,4 +139,7 @@ public class DiscussPostService {
         return discussPostMapper.updateScore(id, score);
     }
 
+    public int updateLikeCount(int id,int likeCount){
+        return discussPostMapper.updateLikeCount(id,likeCount);
+    }
 }

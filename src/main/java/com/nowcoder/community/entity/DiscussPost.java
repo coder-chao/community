@@ -20,8 +20,30 @@ public class DiscussPost {
     @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String title;
 
-    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
+    @Override
+    public String toString() {
+        return "DiscussPost{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", contentText='" + contentText + '\'' +
+                ", type=" + type +
+                ", status=" + status +
+                ", createTime=" + createTime +
+                ", commentCount=" + commentCount +
+                ", score=" + score +
+                ", likeCount=" + likeCount +
+                '}';
+    }
+
+
+
+    @Field(type = FieldType.Text)
     private String content;
+
+    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
+    private String contentText;
 
     @Field(type = FieldType.Integer)
     private int type;
@@ -37,6 +59,19 @@ public class DiscussPost {
 
     @Field(type = FieldType.Double)
     private double score;
+
+    @Field(type = FieldType.Integer)
+    private int likeCount;
+
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
+
 
     public int getId() {
         return id;
@@ -109,19 +144,11 @@ public class DiscussPost {
     public void setScore(double score) {
         this.score = score;
     }
+    public String getContentText() {
+        return contentText;
+    }
 
-    @Override
-    public String toString() {
-        return "DiscussPost{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", type=" + type +
-                ", status=" + status +
-                ", createTime=" + createTime +
-                ", commentCount=" + commentCount +
-                ", score=" + score +
-                '}';
+    public void setContentText(String contentText) {
+        this.contentText = contentText;
     }
 }

@@ -5,15 +5,16 @@
 <mapper namespace="com.nowcoder.community.dao.DiscussPostMapper">
 
     <sql id="selectFields">
-        id, user_id, title, content, type, status, create_time, comment_count, score
+        id, user_id, title, content,content_text, type, status, create_time, comment_count, score,like_count
     </sql>
 
     <sql id="insertFields">
-        user_id, title, content, type, status, create_time, comment_count, score
+        user_id, title, content, content_text,type, status, create_time, comment_count, score,like_count
     </sql>
 
     <select id="selectDiscussPosts" resultType="DiscussPost">
-        select <include refid="selectFields"></include>
+        select
+        <include refid="selectFields"></include>
         from discuss_post
         where status != 2
         <if test="userId!=0">
@@ -39,13 +40,19 @@
 
     <insert id="insertDiscussPost" parameterType="DiscussPost" keyProperty="id">
         insert into discuss_post(<include refid="insertFields"></include>)
-        values(#{userId},#{title},#{content},#{type},#{status},#{createTime},#{commentCount},#{score})
+        values(#{userId},#{title},#{content},#{contentText},#{type},#{status},#{createTime},#{commentCount},#{score},#{likeCount})
     </insert>
 
     <select id="selectDiscussPostById" resultType="DiscussPost">
-        select <include refid="selectFields"></include>
+        select
+        <include refid="selectFields"></include>
         from discuss_post
         where id = #{id}
+    </select>
+    <select id="selectAllDiscussPosts" resultType="DiscussPost">
+        select
+        <include refid="selectFields"></include>
+        from discuss_post
     </select>
 
     <update id="updateCommentCount">
@@ -62,6 +69,12 @@
 
     <update id="updateScore">
         update discuss_post set score = #{score} where id = #{id}
+    </update>
+    <update id="updateLikeCount">
+        update discuss_post set like_count = #{likeCount} where id = #{id}
+    </update>
+    <update id="updateContentText">
+        update discuss_post set content_text = #{contentText} where id = #{id}
     </update>
 
 </mapper>

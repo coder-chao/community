@@ -34,10 +34,11 @@ $(function(){
         // 获取标题和内容
         var title = $(".shurukuang").val();
         var content = editor.txt.html();
+        var contentText = editor.txt.text()
         // 发送异步请求(POST)
         $.post(
             CONTEXT_PATH + "/discuss/add",
-            {"title":title,"content":content},
+            {"title":title,"content":content,"contentText":contentText},
             function(data) {
                 console.log(data)
                 data = $.parseJSON(data);

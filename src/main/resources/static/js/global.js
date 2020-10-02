@@ -1,4 +1,5 @@
 var CONTEXT_PATH = "";
+var SERVER_PATH = "localhost:8080"
 
 window.alert = function(message) {
 	if(!$(".alert-box").length) {
@@ -38,5 +39,8 @@ window.alert = function(message) {
 // var time = timeagoInstance.format('2018-03-2 17:13:00','zh_CN');
 
 // 自动更新
-var timeagoInstance = timeago();// 实例
-timeagoInstance.render(document.querySelectorAll('.time'),'zh_CN');
+if (document.querySelectorAll('.time').length>0) {
+    
+    var timeagoInstance = timeago();// 实例
+    timeagoInstance.render(document.querySelectorAll('.time'),'zh_CN');
+}

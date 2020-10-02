@@ -3,6 +3,8 @@ package com.nowcoder.community.controller;
 import com.nowcoder.community.entity.Event;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.event.EventProducer;
+import com.nowcoder.community.service.CommentService;
+import com.nowcoder.community.service.DiscussPostService;
 import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
@@ -33,6 +35,12 @@ public class LikeController implements CommunityConstant {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private DiscussPostService discussPostService;
+
+    @Autowired
+    private CommentService commentService;
+
     @RequestMapping(path = "/like", method = RequestMethod.POST)
     @ResponseBody
     public String like(int entityType, int entityId, int entityUserId, int postId) {
@@ -43,6 +51,14 @@ public class LikeController implements CommunityConstant {
 
         // 数量
         long likeCount = likeService.findEntityLikeCount(entityType, entityId);
+        //如果是评论则更新评论的点赞数量
+        if (entityType == ENTITY_TYPE_POST) {
+            discussPostService.updateLikeCount(entityId, (int) likeCount);
+        }
+        //如果是评论则更新评论的点赞数量
+        if (entityType == ENTITY_TYPE_COMMENT) {
+            commentService.updateLikeCountById(entityId, (int) likeCount);
+        }
         // 状态
         int likeStatus = likeService.findEntityLikeStatus(user.getId(), entityType, entityId);
         // 返回的结果
@@ -62,7 +78,7 @@ public class LikeController implements CommunityConstant {
             eventProducer.fireEvent(event);
         }
 
-        if(entityType == ENTITY_TYPE_POST) {
+        if (entityType == ENTITY_TYPE_POST) {
             // 计算帖子分数
             String redisKey = RedisKeyUtil.getPostScoreKey();
             redisTemplate.opsForSet().add(redisKey, postId);

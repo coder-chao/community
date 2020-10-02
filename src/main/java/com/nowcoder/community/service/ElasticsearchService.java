@@ -45,14 +45,14 @@ public class ElasticsearchService {
 
     public Page<DiscussPost> searchDiscussPost(String keyword, int current, int limit) {
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.multiMatchQuery(keyword, "title", "content"))
+                .withQuery(QueryBuilders.multiMatchQuery(keyword, "title", "contentText"))
                 .withSort(SortBuilders.fieldSort("type").order(SortOrder.DESC))
                 .withSort(SortBuilders.fieldSort("score").order(SortOrder.DESC))
                 .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
                 .withPageable(PageRequest.of(current, limit))
                 .withHighlightFields(
                         new HighlightBuilder.Field("title").preTags("<em>").postTags("</em>"),
-                        new HighlightBuilder.Field("content").preTags("<em>").postTags("</em>")
+                        new HighlightBuilder.Field("contentText").preTags("<em>").postTags("</em>")
                 ).build();
 
         return elasticTemplate.queryForPage(searchQuery, DiscussPost.class, new SearchResultMapper() {
@@ -76,8 +76,8 @@ public class ElasticsearchService {
                     String title = hit.getSourceAsMap().get("title").toString();
                     post.setTitle(title);
 
-                    String content = hit.getSourceAsMap().get("content").toString();
-                    post.setContent(content);
+                    String contentText = hit.getSourceAsMap().get("contentText").toString();
+                    post.setContentText(contentText);
 
                     String status = hit.getSourceAsMap().get("status").toString();
                     post.setStatus(Integer.valueOf(status));
@@ -94,9 +94,9 @@ public class ElasticsearchService {
                         post.setTitle(titleField.getFragments()[0].toString());
                     }
 
-                    HighlightField contentField = hit.getHighlightFields().get("content");
+                    HighlightField contentField = hit.getHighlightFields().get("contentText");
                     if (contentField != null) {
-                        post.setContent(contentField.getFragments()[0].toString());
+                        post.setContentText(contentField.getFragments()[0].toString());
                     }
 
                     list.add(post);

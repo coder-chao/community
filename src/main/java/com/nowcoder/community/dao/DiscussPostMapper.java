@@ -9,6 +9,8 @@ import java.util.List;
 @Mapper
 public interface DiscussPostMapper {
 
+    List<DiscussPost> selectAllDiscussPosts();
+
     List<DiscussPost> selectDiscussPosts(int userId, int offset, int limit, int orderMode);
 
     // @Param注解用于给参数取别名,
@@ -26,5 +28,10 @@ public interface DiscussPostMapper {
     int updateStatus(int id, int status);
 
     int updateScore(int id, double score);
+
+    int updateLikeCount(int id, int likeCount);
+
+    int updateContentText(int id, String contentText);
+
 
 }

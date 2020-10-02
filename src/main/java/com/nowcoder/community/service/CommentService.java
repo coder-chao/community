@@ -25,8 +25,13 @@ public class CommentService implements CommunityConstant {
     @Autowired
     private DiscussPostService discussPostService;
 
+    @Deprecated
     public List<Comment> findCommentsByEntity(int entityType, int entityId, int offset, int limit) {
         return commentMapper.selectCommentsByEntity(entityType, entityId, offset, limit);
+    }
+
+    public List<Comment> findCommentsWithOrder(int entityType, int entityId, int offset, int limit,int orderMode) {
+        return commentMapper.selectCommentsWithOrder(entityType, entityId, offset, limit,orderMode);
     }
 
     public List<Comment> findreplysByCommentId(int commentId, int offset, int limit) {
@@ -67,6 +72,10 @@ public class CommentService implements CommunityConstant {
 
     public int findCommentCountByUserId(int userId) {
         return commentMapper.selectCommentCountByUserId(userId);
+    }
+
+    public int updateLikeCountById(int id,int likeCount) {
+        return commentMapper.updateLikeCountById(id,likeCount);
     }
 
 

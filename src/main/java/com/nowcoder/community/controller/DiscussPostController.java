@@ -2,10 +2,7 @@ package com.nowcoder.community.controller;
 
 import com.nowcoder.community.entity.*;
 import com.nowcoder.community.event.EventProducer;
-import com.nowcoder.community.service.CommentService;
-import com.nowcoder.community.service.DiscussPostService;
-import com.nowcoder.community.service.LikeService;
-import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.service.*;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
@@ -43,18 +40,21 @@ public class DiscussPostController implements CommunityConstant {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private RecordService recordService;
+
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addDiscussPost(String title, String content) {
+    public String addDiscussPost(DiscussPost post) {
         User user = hostHolder.getUser();
         if (user == null) {
             return CommunityUtil.getJSONString(403, "你还没有登录哦!");
         }
 
-        DiscussPost post = new DiscussPost();
         post.setUserId(user.getId());
-        post.setTitle(title);
-        post.setContent(content);
+        post.setTitle(post.getTitle());
+        post.setContent(post.getContent());
+        post.setContentText(post.getContentText());
         post.setCreateTime(new Date());
         discussPostService.addDiscussPost(post);
 
@@ -75,7 +75,9 @@ public class DiscussPostController implements CommunityConstant {
     }
 
     @RequestMapping(path = "/detail/{discussPostId}", method = RequestMethod.GET)
-    public String getDiscussPost(@PathVariable("discussPostId") int discussPostId, Model model, Page page) {
+    public String getDiscussPost(@PathVariable("discussPostId") int discussPostId, Model model, Page page,
+                                 @RequestParam(name = "orderMode", defaultValue = "0") int orderMode) {
+        model.addAttribute("orderMode", orderMode);
         // 帖子
         DiscussPost post = discussPostService.findDiscussPostById(discussPostId);
         model.addAttribute("post", post);
@@ -91,15 +93,15 @@ public class DiscussPostController implements CommunityConstant {
         model.addAttribute("likeStatus", likeStatus);
 
         // 评论分页信息
-        page.setLimit(5);
-        page.setPath("/discuss/detail/" + discussPostId);
+        page.setLimit(10);
+        page.setPath("/discuss/detail/" + discussPostId+"?orderMode="+orderMode);
         page.setRows(post.getCommentCount());
 
         // 评论: 给帖子的评论
         // 回复: 给评论的评论
         // 评论列表
-        List<Comment> commentList = commentService.findCommentsByEntity(
-                ENTITY_TYPE_POST, post.getId(), page.getOffset(), page.getLimit());
+        List<Comment> commentList = commentService.findCommentsWithOrder(
+                ENTITY_TYPE_POST, post.getId(), page.getOffset(), page.getLimit(),orderMode);
         // 评论VO列表
         List<Map<String, Object>> commentVoList = new ArrayList<>();
         if (commentList != null) {
@@ -114,13 +116,14 @@ public class DiscussPostController implements CommunityConstant {
                 likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_COMMENT, comment.getId());
                 commentVo.put("likeCount", likeCount);
                 // 点赞状态
+
                 likeStatus = hostHolder.getUser() == null ? 0 :
                         likeService.findEntityLikeStatus(hostHolder.getUser().getId(), ENTITY_TYPE_COMMENT, comment.getId());
                 commentVo.put("likeStatus", likeStatus);
 
                 // 回复列表
-                List<Comment> replyList = commentService.findCommentsByEntity(
-                        ENTITY_TYPE_COMMENT, comment.getId(), 0, Integer.MAX_VALUE);
+                List<Comment> replyList = commentService.findCommentsWithOrder(
+                        ENTITY_TYPE_COMMENT, comment.getId(), 0, Integer.MAX_VALUE,orderMode);
                 // 回复VO列表
                 List<Map<String, Object>> replyVoList = new ArrayList<>();
                 if (replyList != null) {

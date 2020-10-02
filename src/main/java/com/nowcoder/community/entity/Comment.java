@@ -12,6 +12,30 @@ public class Comment {
     private String content;
     private int status;
     private Date createTime;
+    private int likeCount;
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", entityType=" + entityType +
+                ", entityId=" + entityId +
+                ", targetId=" + targetId +
+                ", content='" + content + '\'' +
+                ", status=" + status +
+                ", createTime=" + createTime +
+                ", likeCount=" + likeCount +
+                '}';
+    }
+
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
 
     public int getId() {
         return id;
@@ -77,17 +101,4 @@ public class Comment {
         this.createTime = createTime;
     }
 
-    @Override
-    public String toString() {
-        return "Comment{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", entityType=" + entityType +
-                ", entityId=" + entityId +
-                ", targetId=" + targetId +
-                ", content='" + content + '\'' +
-                ", status=" + status +
-                ", createTime=" + createTime +
-                '}';
-    }
 }

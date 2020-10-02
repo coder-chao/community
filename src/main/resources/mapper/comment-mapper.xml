@@ -5,12 +5,17 @@
 <mapper namespace="com.nowcoder.community.dao.CommentMapper">
 
     <sql id="selectFields">
-        id, user_id, entity_type, entity_id, target_id, content, status, create_time
+        id, user_id, entity_type, entity_id, target_id, content, status, create_time,like_count
     </sql>
 
     <sql id="insertFields">
-        user_id, entity_type, entity_id, target_id, content, status, create_time
+        user_id, entity_type, entity_id, target_id, content, status, create_time,like_count
     </sql>
+    <update id="updateLikeCountById">
+        update comment
+        set like_count = #{likeCount}
+        where id = #{id}
+    </update>
 
     <select id="selectCommentsByEntity" resultType="Comment">
         select <include refid="selectFields"></include>
@@ -32,7 +37,7 @@
 
     <insert id="insertComment" parameterType="Comment">
         insert into comment(<include refid="insertFields"></include>)
-        values(#{userId},#{entityType},#{entityId},#{targetId},#{content},#{status},#{createTime})
+        values(#{userId},#{entityType},#{entityId},#{targetId},#{content},#{status},#{createTime},#{likeCount})
     </insert>
 
     <select id="selectCommentById" resultType="Comment">
@@ -62,6 +67,27 @@
         and entity_id = #{commentId}
         order by create_time asc
         limit #{offset}, #{limit}
+    </select>
+    <select id="selectCommentsWithOrder" resultType="Comment">
+        select <include refid="selectFields"></include>
+        from comment
+        where status != 2
+        and entity_type = #{entityType}
+        and entity_id = #{entityId}
+        <if test="orderMode==0">
+            order by like_count desc, create_time desc
+        </if>
+        <if test="orderMode==1">
+            order by create_time desc
+        </if>
+        <if test="orderMode==2">
+            order by create_time asc
+        </if>
+        limit #{offset}, #{limit}
+    </select>
+    <select id="selectAllComments" resultType="Comment">
+        select <include refid="selectFields"></include>
+        from comment
     </select>
 
 

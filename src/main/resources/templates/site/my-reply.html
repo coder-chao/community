@@ -70,10 +70,10 @@
 							<a class="nav-link" th:href="@{|/user/profile/${userId}|}">个人信息</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link active" th:href="@{|/user/profile/${userId}/post|}">发布的帖子</a>
+							<a class="nav-link" th:href="@{|/user/profile/${userId}/post|}">发布的帖子</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" th:href="@{|/user/profile/${userId}/reply|}">发布的回复</a>
+							<a class="nav-link active" th:href="@{|/user/profile/${userId}/reply|}">发布的回复</a>
 						</li>
 					</ul>
 <!--					<a href="profile.html" class="text-muted position-absolute rt-0">返回个人主页&gt;</a>-->
@@ -83,9 +83,10 @@
 					<h6><b class="square"></b> 回复的帖子(<span th:text="${page.rows}">10</span>)</h6>
 					<ul class="list-unstyled mt-4 pl-3 pr-3">
 						<li class="border-bottom pb-3 mt-4" th:each="map:${comments}">
-							<div class="font-size-16 text-info">
-								<a th:href="|/discuss/detail/${map.target.id}|" class="text-info" th:utext="${map.target.content}">备战春招，面试刷题跟他复习，一个月全搞定！</a>
-							</div>
+							<div class="font-size-16" th:if="${map.target}">
+                                <a th:if="${map.target.status != 2}" th:href="|/discuss/detail/${map.target.id}|" class="text-info" th:utext="${map.target.title}">备战春招，面试刷题跟他复习，一个月全搞定！</a>
+                                <p th:unless="${map.target.status != 2}" >该贴因违反社区规定，已被删除</p>
+                            </div>
 							<div class="mt-1 font-size-14" th:utext="${map.comment.content}">
 								顶顶顶!								
 							</div>

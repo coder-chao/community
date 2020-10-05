@@ -12,6 +12,23 @@ body {
 	height: 100%;
 }
 
+img{
+    max-width: 600px;
+}
+.fx{
+    display: flex;
+}
+
+.jc{
+    justify-content: center;
+}
+.je{
+    justify-content: end;
+}
+.ac{
+    align-items: center;
+}
+
 .nk-container {
 	position: relative;
 	height: auto;
@@ -19,8 +36,20 @@ body {
 }
 
 .container {
-	width: 960px;
-	padding: 0;
+	width: 920px;
+    padding: 0;
+    
+}
+
+.main {
+	padding: 20px 0;
+	padding-bottom: 200px;
+}
+
+.main .container {
+	background: #fff;
+	padding: 20px;
+	min-height: 320px;
 }
 .sticky-top{
 	z-index: 999999;
@@ -65,16 +94,6 @@ footer .company-info li {
 	margin: 4px 0;
 }
 
-.main {
-	padding: 20px 0;
-	padding-bottom: 200px;
-}
-
-.main .container {
-	background: #fff;
-	padding: 20px;
-	min-height: 320px;
-}
 
 i {
 	font-style: normal;

@@ -93,4 +93,5 @@ public interface CommunityConstant {
     String AUTHORITY_MODERATOR = "moderator";
 
 
+    int SIGN_DELETE = 2;
 }

@@ -28,4 +28,8 @@ public interface CommentMapper {
 
     int updateLikeCountById(int id,int likeCount);
 
+    int updatePostId(int id,int postId);
+
+    int updateStatus(int id,int status);
+
 }

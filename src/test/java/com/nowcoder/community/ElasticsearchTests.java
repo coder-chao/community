@@ -50,17 +50,18 @@ public class ElasticsearchTests {
         discussRepository.saveAll(discussMapper.selectAllDiscussPosts());
     }
 
-    @Test
-    public void testUpdate() {
-        DiscussPost post = discussMapper.selectDiscussPostById(231);
-        post.setContent("我是新人,使劲灌水.");
-        discussRepository.save(post);
-    }
 
     @Test
     public void testDelete() {
         // discussRepository.deleteById(231);
         discussRepository.deleteAll();
+    }
+
+    @Test
+    public void testUpdate() {
+        DiscussPost post = discussMapper.selectDiscussPostById(231);
+        post.setContent("我是新人,使劲灌水.");
+        discussRepository.save(post);
     }
 
     @Test
@@ -92,7 +93,7 @@ public class ElasticsearchTests {
     @Test
     public void testSearchByTemplate() {
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.multiMatchQuery("劫", "title", "contentText"))
+                .withQuery(QueryBuilders.multiMatchQuery("兮夜", "title", "contentText"))
                 .withSort(SortBuilders.fieldSort("type").order(SortOrder.DESC))
                 .withSort(SortBuilders.fieldSort("score").order(SortOrder.DESC))
                 .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
@@ -102,57 +103,62 @@ public class ElasticsearchTests {
                         new HighlightBuilder.Field("contentText").preTags("<em>").postTags("</em>")
                 ).build();
 
-        Page<DiscussPost> page = elasticTemplate.queryForPage(searchQuery, DiscussPost.class, new SearchResultMapper() {
-            @Override
-            public <T> AggregatedPage<T> mapResults(SearchResponse response, Class<T> aClass, Pageable pageable) {
-                SearchHits hits = response.getHits();
-                if (hits.getTotalHits() <= 0) {
-                    return null;
-                }
-
-                List<DiscussPost> list = new ArrayList<>();
-                for (SearchHit hit : hits) {
-                    DiscussPost post = new DiscussPost();
-
-                    String id = hit.getSourceAsMap().get("id").toString();
-                    post.setId(Integer.valueOf(id));
-
-                    String userId = hit.getSourceAsMap().get("userId").toString();
-                    post.setUserId(Integer.valueOf(userId));
-
-                    String title = hit.getSourceAsMap().get("title").toString();
-                    post.setTitle(title);
-
-                    String contentText = hit.getSourceAsMap().get("contentText").toString();
-                    post.setContentText(contentText);
-
-                    String status = hit.getSourceAsMap().get("status").toString();
-                    post.setStatus(Integer.valueOf(status));
-
-                    String createTime = hit.getSourceAsMap().get("createTime").toString();
-                    post.setCreateTime(new Date(Long.valueOf(createTime)));
-
-                    String commentCount = hit.getSourceAsMap().get("commentCount").toString();
-                    post.setCommentCount(Integer.valueOf(commentCount));
-
-                    // 处理高亮显示的结果
-                    HighlightField titleField = hit.getHighlightFields().get("title");
-                    if (titleField != null) {
-                        post.setTitle(titleField.getFragments()[0].toString());
+        Page<DiscussPost> page = null;
+        try {
+            page = elasticTemplate.queryForPage(searchQuery, DiscussPost.class, new SearchResultMapper() {
+                @Override
+                public <T> AggregatedPage<T> mapResults(SearchResponse response, Class<T> aClass, Pageable pageable) {
+                    SearchHits hits = response.getHits();
+                    if (hits.getTotalHits() <= 0) {
+                        return null;
                     }
 
-                    HighlightField contentField = hit.getHighlightFields().get("contentText");
-                    if (contentField != null) {
-                        post.setContentText(contentField.getFragments()[0].toString());
+                    List<DiscussPost> list = new ArrayList<>();
+                    for (SearchHit hit : hits) {
+                        DiscussPost post = new DiscussPost();
+
+                        String id = hit.getSourceAsMap().get("id").toString();
+                        post.setId(Integer.valueOf(id));
+
+                        String userId = hit.getSourceAsMap().get("userId").toString();
+                        post.setUserId(Integer.valueOf(userId));
+
+                        String title = hit.getSourceAsMap().get("title").toString();
+                        post.setTitle(title);
+
+                        String contentText = hit.getSourceAsMap().get("contentText")!=null?hit.getSourceAsMap().get("contentText").toString():"";
+
+                        post.setContentText(contentText);
+
+                        String status = hit.getSourceAsMap().get("status").toString();
+                        post.setStatus(Integer.valueOf(status));
+
+                        String createTime = hit.getSourceAsMap().get("createTime").toString();
+                        post.setCreateTime(new Date(Long.valueOf(createTime)));
+                        String commentCount = hit.getSourceAsMap().get("commentCount").toString();
+                        post.setCommentCount(Integer.valueOf(commentCount));
+
+                        // 处理高亮显示的结果
+                        HighlightField titleField = hit.getHighlightFields().get("title");
+                        if (titleField != null) {
+                            post.setTitle(titleField.getFragments()[0].toString());
+                        }
+
+                        HighlightField contentField = hit.getHighlightFields().get("contentText");
+                        if (contentField != null) {
+                            post.setContentText(contentField.getFragments()[0].toString());
+                        }
+
+                        list.add(post);
                     }
 
-                    list.add(post);
+                    return new AggregatedPageImpl(list, pageable,
+                            hits.getTotalHits(), response.getAggregations(), response.getScrollId(), hits.getMaxScore());
                 }
-
-                return new AggregatedPageImpl(list, pageable,
-                        hits.getTotalHits(), response.getAggregations(), response.getScrollId(), hits.getMaxScore());
-            }
-        });
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         System.out.println(page.getTotalElements());
         System.out.println(page.getTotalPages());

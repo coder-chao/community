@@ -2,6 +2,7 @@ package com.nowcoder.community.controller;
 
 import com.nowcoder.community.entity.*;
 import com.nowcoder.community.event.EventProducer;
+import com.nowcoder.community.exception.NotFoundException;
 import com.nowcoder.community.service.*;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
@@ -10,6 +11,7 @@ import com.nowcoder.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,9 +79,12 @@ public class DiscussPostController implements CommunityConstant {
     @RequestMapping(path = "/detail/{discussPostId}", method = RequestMethod.GET)
     public String getDiscussPost(@PathVariable("discussPostId") int discussPostId, Model model, Page page,
                                  @RequestParam(name = "orderMode", defaultValue = "0") int orderMode) {
-        model.addAttribute("orderMode", orderMode);
         // 帖子
         DiscussPost post = discussPostService.findDiscussPostById(discussPostId);
+        if (post == null || post.getStatus() == SIGN_DELETE) {
+            throw new NotFoundException("出现404异常");
+        }
+        model.addAttribute("orderMode", orderMode);
         model.addAttribute("post", post);
         // 作者
         User user = userService.findUserById(post.getUserId());
@@ -201,11 +206,11 @@ public class DiscussPostController implements CommunityConstant {
     }
 
     // 删除
+    @Transactional
     @RequestMapping(path = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public String setDelete(int id) {
         discussPostService.updateStatus(id, 2);
-
         // 触发删帖事件
         Event event = new Event()
                 .setTopic(TOPIC_DELETE)

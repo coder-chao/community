@@ -1,5 +1,5 @@
 var editor = null
-$(function(){
+$(function () {
 
     var E = window.wangEditor;
     //这里的id为<div id="editor"中的id.
@@ -29,32 +29,63 @@ $(function(){
     //     alert(editor.txt.text())
     // }, false)
 })
-
-    function publish() {
-        // 获取标题和内容
-        var title = $(".shurukuang").val();
-        var content = editor.txt.html();
-        var contentText = editor.txt.text()
-        // 发送异步请求(POST)
-        $.post(
-            CONTEXT_PATH + "/discuss/add",
-            {"title":title,"content":content,"contentText":contentText},
-            function(data) {
-                console.log(data)
-                data = $.parseJSON(data);
-                // 在提示框中显示返回消息
-                $("#hintBody").text(data.msg);
-                // 显示提示框
-                $("#hintModal").modal("show");
-                // 2秒后,自动隐藏提示框
-                setTimeout(function(){
-                    $("#hintModal").modal("hide");
-                    // 刷新页面
-                    if(data.code == 0) {
-                        window.location.href="/";
-                        return false
-                    }
-                }, 2000);
-            }
-        );
+function isContentValid(str) {
+    let num = 0;
+    reg = /<p>(&nbsp;|&nbsp;\s+)+<\/p>|<p>(<br>)+<\/p>/g;
+    while (num < str.length && str != "") {
+        num++;
+        let k = str.match(reg);
+        if (k) {
+            str = str.replace(k[0], "");
+        }
+    }
+    return str !== "";
+}
+function publish() {
+    // 获取标题和内容
+    var title = $(".shurukuang").val();
+    var content = editor.txt.html();
+    var contentText = editor.txt.text()
+    if (title.trim().length <= 0) {
+        $("#hintBody").text("标题不能为空！");
+        $("#hintModal").modal("show");
+        setTimeout(function () {
+            $("#hintModal").modal("hide");
+            // 刷新页面
+        }, 2000);
+        return
+    }
+    //内容为空
+    if (!isContentValid(content)) {
+        $("#hintBody").text("内容不能为空！");
+        $("#hintModal").modal("show");
+        setTimeout(function () {
+            $("#hintModal").modal("hide");
+            // 刷新页面
+        }, 2000);
+        return
+    }
+    
+    // 发送异步请求(POST)
+    $.post(
+        CONTEXT_PATH + "/discuss/add",
+        {"title":title,"content":content,"contentText":contentText},
+        function(data) {
+            console.log(data)
+            data = $.parseJSON(data);
+            // 在提示框中显示返回消息
+            $("#hintBody").text(data.msg);
+            // 显示提示框
+            $("#hintModal").modal("show");
+            // 2秒后,自动隐藏提示框
+            setTimeout(function(){
+                $("#hintModal").modal("hide");
+                // 刷新页面
+                if(data.code == 0) {
+                    window.location.href="/";
+                    return false
+                }
+            }, 2000);
+        }
+    );
 }

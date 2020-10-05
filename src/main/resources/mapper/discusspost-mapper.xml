@@ -53,6 +53,7 @@
         select
         <include refid="selectFields"></include>
         from discuss_post
+        where status != 2
     </select>
 
     <update id="updateCommentCount">

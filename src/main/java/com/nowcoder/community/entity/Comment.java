@@ -6,19 +6,14 @@ public class Comment {
 
     private int id;
     private int userId;
-    private int entityType;
-    private int entityId;
-    private int targetId;
-    private String content;
-    private int status;
-    private Date createTime;
-    private int likeCount;
+    private int postId;
 
     @Override
     public String toString() {
         return "Comment{" +
                 "id=" + id +
                 ", userId=" + userId +
+                ", postId=" + postId +
                 ", entityType=" + entityType +
                 ", entityId=" + entityId +
                 ", targetId=" + targetId +
@@ -28,6 +23,22 @@ public class Comment {
                 ", likeCount=" + likeCount +
                 '}';
     }
+
+    public int getPostId() {
+        return postId;
+    }
+
+    public void setPostId(int postId) {
+        this.postId = postId;
+    }
+
+    private int entityType;
+    private int entityId;
+    private int targetId;
+    private String content;
+    private int status;
+    private Date createTime;
+    private int likeCount;
 
     public int getLikeCount() {
         return likeCount;

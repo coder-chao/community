@@ -2,6 +2,7 @@ $(function(){
     $("#topBtn").click(setTop);
     $("#wonderfulBtn").click(setWonderful);
     $("#deleteBtn").click(setDelete);
+
 });
 
 function like(btn, entityType, entityId, entityUserId, postId) {
@@ -61,6 +62,21 @@ function setDelete() {
             data = $.parseJSON(data);
             if(data.code == 0) {
                 location.href = CONTEXT_PATH + "/index";
+            } else {
+                alert(data.msg);
+            }
+        }
+    );
+}
+
+function deleteComment(btn){
+    $.post(
+        CONTEXT_PATH + "/comment/delete",
+        {"id":$(btn).parent().prev().val()},
+        function(data) {
+            data = $.parseJSON(data);
+            if(data.code == 0) {
+                window.location.reload()
             } else {
                 alert(data.msg);
             }

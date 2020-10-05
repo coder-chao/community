@@ -25,6 +25,8 @@ public class DiscussPostTest implements CommunityConstant {
     @Autowired
     private EventProducer eventProducer;
 
+
+
     @Test
     public void postInsert(){
 
@@ -51,5 +53,7 @@ public class DiscussPostTest implements CommunityConstant {
 
 
     }
+
+
 
 }

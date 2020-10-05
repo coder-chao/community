@@ -76,7 +76,7 @@ public class ElasticsearchService {
                     String title = hit.getSourceAsMap().get("title").toString();
                     post.setTitle(title);
 
-                    String contentText = hit.getSourceAsMap().get("contentText").toString();
+                    String contentText = hit.getSourceAsMap().get("contentText")!=null?hit.getSourceAsMap().get("contentText").toString():"";
                     post.setContentText(contentText);
 
                     String status = hit.getSourceAsMap().get("status").toString();

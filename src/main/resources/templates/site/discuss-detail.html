@@ -129,10 +129,10 @@
                 </div>
                 <!-- 排序按钮 -->
                 <div class="sort col-2">
-                    <a href="javascript:;" class="shang-btn btn btn-sm text-left"><span class="sort-text">按点赞数排序</span>&nbsp;&nbsp;
+                    <a href="javascript:;" class="shang-btn btn btn-sm text-left"><span class="sort-text">按点赞排序</span>&nbsp;&nbsp;
                         <span class="arrow iconfont">&#xe692;</span></a>
                     <div class="btn-list">
-                        <a th:href="@{|/discuss/detail/${post.id}?orderMode=0|}" class="btn btn-sm text-left">按点赞数排序</a>
+                        <a th:href="@{|/discuss/detail/${post.id}?orderMode=0|}" class="btn btn-sm text-left">按点赞排序</a>
                         <a th:href="@{|/discuss/detail/${post.id}?orderMode=1|}" class="btn btn-sm text-left">按最新排序</a>
                         <a th:href="@{|/discuss/detail/${post.id}?orderMode=2|}" class="btn btn-sm text-left">按最晚排序</a>
                     </div>
@@ -144,6 +144,7 @@
             </div>
             <!-- 回帖列表 -->
             <ul class="list-unstyled mt-4">
+                <!-- 一级评论 -->
                 <li class="media pb-3 pt-3 mb-3 border-bottom" th:each="cvo:${comments}">
                     <a th:href="@{|/user/profile/${cvo.user.id}|}">
                         <img th:src="${cvo.user.headerUrl}" class="align-self-start mr-4 rounded-circle user-header"
@@ -156,16 +157,28 @@
 									<i th:text="${page.offset + cvoStat.count}">1</i>#
 								</span>
                         </div>
-                        <div class="mt-2" th:utext="${cvo.comment.content}">
+                        <div class="mt-2" th:if="${cvo.comment.status != 2}" th:utext="${cvo.comment.content}">
                             这开课时间是不是有点晚啊。。。
+                        </div>
+                        <div class="mt-2" th:unless="${cvo.comment.status != 2}">
+                            该评论因违反社区规定，已被删除
                         </div>
                         <div class="mt-4 text-muted font-size-12">
                             <span>发布于 <b class="time" th:datetime="${#dates.format(cvo.comment.createTime,'yyyy-MM-dd HH:mm:ss')}">2019-04-15 15:32:18</b></span>
                             <ul class="d-inline float-right">
+                                <!-- 删除按钮 -->
+                                <input type="hidden"  th:value="${cvo.comment.id}">
+                                <li class="d-inline ml-2" th:if="${cvo.comment.status!=2}" sec:authorize="hasAnyAuthority('admin')">
+                                    <a href="javascript:;" class="text-primary" onclick="deleteComment(this)">删除</a>
+                                </li>
+                                <li class="d-inline ml-2" th:if="${cvo.comment.status!=2}" sec:authorize="hasAnyAuthority('admin')">|</li>
+
+                                <!-- 折叠展开按钮 -->
                                 <li class="d-inline ml-2" th:if="${not#lists.isEmpty(cvo.replys)}">
                                     <a href="javascript:;" class="text-primary zhebtn">折叠以下回复</a>
                                 </li>
                                 <li class="d-inline ml-2" th:if="${not#lists.isEmpty(cvo.replys)}">|</li>
+                                <!-- 点赞 -->
                                 <li class="d-inline ml-2">
                                     <a href="javascript:;"
                                        th:onclick="|like(this,2,${cvo.comment.id},${cvo.comment.userId},${post.id});|"
@@ -181,24 +194,35 @@
                                 </li>
                             </ul>
                         </div>
-                        <!-- 回复列表 -->
+                        <!-- 回复列表，包括二级评论和回复 -->
                         <ul class="list-unstyled mt-4 bg-gray p-3 font-size-12 text-muted reply-list"
                             th:if="${not#lists.isEmpty(cvo.replys)}">
 
                             <li class="pb-3 pt-3 mb-3 border-bottom" th:each="rvo:${cvo.replys}">
                                 <div>
-										<span th:if="${rvo.target==null}">
-											<a th:href="@{|/user/profile/${rvo.user.id}|}" class="text-info" th:text="${rvo.user.username}">寒江雪</a>:&nbsp;&nbsp;
-										</span>
+                                    <!-- 二级评论 -->
+                                    <span th:if="${rvo.target==null}">
+                                        <a th:href="@{|/user/profile/${rvo.user.id}|}" class="text-info" th:text="${rvo.user.username}">寒江雪</a>:&nbsp;&nbsp;
+                                    </span>
+                                    <!-- 回复 -->
                                     <span th:if="${rvo.target!=null}">
-											<a th:href="@{|/user/profile/${rvo.user.id}|}" class="text-info" th:text="${rvo.user.username}">Sissi</a> 回复
-											<a th:href="@{|/user/profile/${rvo.target.id}|}" class="text-info" th:text="${rvo.target.username}">寒江雪</a>:&nbsp;&nbsp;
+                                        <a th:href="@{|/user/profile/${rvo.user.id}|}" class="text-info" th:text="${rvo.user.username}">Sissi</a> 回复
+                                        <a th:href="@{|/user/profile/${rvo.target.id}|}" class="text-info" th:text="${rvo.target.username}">寒江雪</a>:&nbsp;&nbsp;
 										</span>
-                                    <span class="reply-content" th:utext="${rvo.reply.content}">这个是直播时间哈，觉得晚的话可以直接看之前的完整录播的~</span>
+                                    <span class="reply-content" th:if="${rvo.reply.status != 2}" th:utext="${rvo.reply.content}">这个是直播时间哈，觉得晚的话可以直接看之前的完整录播的~</span>
+                                    <span class="reply-content" th:unless="${rvo.reply.status != 2}">该评论因违反社区规定，已被删除</span>
                                 </div>
                                 <div class="mt-3">
                                     发布于 <span class="time" th:datetime="${#dates.format(rvo.reply.createTime,'yyyy-MM-dd HH:mm:ss')}">2019-04-15 15:32:18</span>
                                     <ul class="d-inline float-right">
+                                        <!-- 删除按钮 -->
+                                        <input type="hidden" th:value="${rvo.reply.id}">
+                                        <li class="d-inline ml-2" th:if="${rvo.reply.status!=2}" sec:authorize="hasAnyAuthority('admin')">
+                                            <a href="javascript:;" class="text-primary" onclick="deleteComment(this)">删除</a>
+                                        </li>
+                                        <li class="d-inline ml-2" th:if="${rvo.reply.status!=2}" sec:authorize="hasAnyAuthority('admin')">|</li>
+
+                                        <!-- 点赞 -->
                                         <li class="d-inline ml-2">
                                             <a href="javascript:;"
                                                th:onclick="|like(this,2,${rvo.reply.id},${rvo.reply.userId},${post.id});|"
@@ -208,42 +232,17 @@
                                             </a>
                                         </li>
                                         <li class="d-inline ml-2">|</li>
+                                        <!-- 回复 -->
                                         <li class="d-inline ml-2"><a href="javascript:;"
                                                                      th:onclick="|inputFocus(ENTITY_TYPE_COMMENT,${cvo.comment.id},${rvo.reply.userId})|"
                                                                      data-toggle="collapse"
                                                                      class="text-primary">回复</a>
                                         </li>
                                     </ul>
-                                    <!--<div th:id="|huifu-${rvoStat.count}|" class="mt-4 collapse">
-                                        <form method="post" th:action="@{|/comment/add/${post.id}|}">
-                                            <div>
-                                                <input type="text" class="input-size" name="content"
-                                                       th:placeholder="|回复${rvo.user.username}|"/>
-                                                <input type="hidden" name="entityType" value="2">
-                                                <input type="hidden" name="entityId" th:value="${cvo.comment.id}">
-                                                <input type="hidden" name="targetId" th:value="${rvo.user.id}">
-                                            </div>
-                                            <div class="text-right mt-2">
-                                                <button type="submit" class="btn btn-primary btn-sm" onclick="#">&nbsp;&nbsp;回&nbsp;&nbsp;复&nbsp;&nbsp;</button>
-                                            </div>
-                                        </form>
-                                    </div>-->
+                                   
                                 </div>
                             </li>
 
-                            <!-- 回复输入框 -->
-                            <!--								<li class="pb-3 pt-3">-->
-                            <!--									<form method="post" th:action="@{|/comment/add/${post.id}|}">-->
-                            <!--										<div>-->
-                            <!--											<input type="text" class="input-size" name="content" placeholder="请输入你的观点"/>-->
-                            <!--											<input type="hidden" name="entityType" value="2">-->
-                            <!--											<input type="hidden" name="entityId" th:value="${cvo.comment.id}">-->
-                            <!--										</div>-->
-                            <!--										<div class="text-right mt-2">-->
-                            <!--											<button type="submit" class="btn btn-primary btn-sm" onclick="#">&nbsp;&nbsp;回&nbsp;&nbsp;复&nbsp;&nbsp;</button>-->
-                            <!--										</div>-->
-                            <!--									</form>-->
-                            <!--								</li>-->
                         </ul>
                     </div>
                 </li>
@@ -454,7 +453,7 @@
         orderMode = /*[[${orderMode}]]*/ 0
         switch (orderMode) {
             case 0:
-                $('.sort-text').text("按点赞数排序");
+                $('.sort-text').text("按点赞排序");
                 break;
             case 1:
                 $('.sort-text').text("按最新排序");
@@ -464,7 +463,7 @@
                 break;
 
             default:
-                $('.sort-text').text("按点赞数排序");
+                $('.sort-text').text("按点赞排序");
                 break;
         }
     })

@@ -64,6 +64,7 @@ public class EventConsumer implements CommunityConstant {
 //    @Autowired
 //    private ThreadPoolTaskScheduler taskScheduler;
 
+    //处理评论、点赞、关注事件
     @KafkaListener(topics = {TOPIC_COMMENT, TOPIC_LIKE, TOPIC_FOLLOW})
     public void handleCommentMessage(ConsumerRecord record) {
         if (record == null || record.value() == null) {

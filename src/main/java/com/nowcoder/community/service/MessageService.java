@@ -1,5 +1,6 @@
 package com.nowcoder.community.service;
 
+import com.nowcoder.community.dao.DiscussPostMapper;
 import com.nowcoder.community.dao.MessageMapper;
 import com.nowcoder.community.entity.Message;
 import com.nowcoder.community.util.SensitiveFilter;

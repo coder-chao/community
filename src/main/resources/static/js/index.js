@@ -1,5 +1,5 @@
 $(function(){
-	$("#publishBtn").click(publish);
+    $("#publishBtn").click(publish);
 });
 
 function publish() {
@@ -37,3 +37,6 @@ function publish() {
 	);
 
 }
+
+
+   

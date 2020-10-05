@@ -81,6 +81,7 @@ public class CommentController implements CommunityConstant {
         comment.setUserId(hostHolder.getUser().getId());
         comment.setStatus(0);
         comment.setCreateTime(new Date());
+        comment.setPostId(discussPostId);
         commentService.addComment(comment);
 
         // 触发评论事件
@@ -120,5 +121,12 @@ public class CommentController implements CommunityConstant {
     public String getReplys(@PathVariable("commentId") int commentId,@PathVariable("offset") int offset,@PathVariable("limit") int limit){
 
         return CommunityUtil.getJSONString(0, "回复获取成功!");
+    }
+
+    @PostMapping("/delete")
+    @ResponseBody
+    public String setDelete(int id) {
+        commentService.updateStatus(id,2);
+        return CommunityUtil.getJSONString(0);
     }
 }

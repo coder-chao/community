@@ -5,15 +5,25 @@
 <mapper namespace="com.nowcoder.community.dao.CommentMapper">
 
     <sql id="selectFields">
-        id, user_id, entity_type, entity_id, target_id, content, status, create_time,like_count
+        id, user_id,post_id, entity_type, entity_id, target_id, content, status, create_time,like_count
     </sql>
 
     <sql id="insertFields">
-        user_id, entity_type, entity_id, target_id, content, status, create_time,like_count
+        user_id, post_id,entity_type, entity_id, target_id, content, status, create_time,like_count
     </sql>
     <update id="updateLikeCountById">
         update comment
         set like_count = #{likeCount}
+        where id = #{id}
+    </update>
+    <update id="updatePostId">
+        update comment
+        set post_id = #{postId}
+        where id = #{id}
+    </update>
+    <update id="updateStatus">
+        update comment
+        set status = #{status}
         where id = #{id}
     </update>
 
@@ -37,7 +47,7 @@
 
     <insert id="insertComment" parameterType="Comment">
         insert into comment(<include refid="insertFields"></include>)
-        values(#{userId},#{entityType},#{entityId},#{targetId},#{content},#{status},#{createTime},#{likeCount})
+        values(#{userId},#{postId},#{entityType},#{entityId},#{targetId},#{content},#{status},#{createTime},#{likeCount})
     </insert>
 
     <select id="selectCommentById" resultType="Comment">
@@ -71,8 +81,7 @@
     <select id="selectCommentsWithOrder" resultType="Comment">
         select <include refid="selectFields"></include>
         from comment
-        where status != 2
-        and entity_type = #{entityType}
+        where entity_type = #{entityType}
         and entity_id = #{entityId}
         <if test="orderMode==0">
             order by like_count desc, create_time desc

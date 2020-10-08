@@ -5,11 +5,11 @@
 <mapper namespace="com.nowcoder.community.dao.DiscussPostMapper">
 
     <sql id="selectFields">
-        id, user_id, title, content,content_text, type, status, create_time, comment_count, score,like_count
+        id, user_id, title, content,content_text, type, status, create_time,last_comment_time, comment_count, score,like_count
     </sql>
 
     <sql id="insertFields">
-        user_id, title, content, content_text,type, status, create_time, comment_count, score,like_count
+        user_id, title, content, content_text,type, status, create_time, last_comment_time, comment_count, score,like_count
     </sql>
 
     <select id="selectDiscussPosts" resultType="DiscussPost">
@@ -21,10 +21,17 @@
             and user_id = #{userId}
         </if>
         <if test="orderMode==0">
-            order by type desc, create_time desc
+            order by type desc, create_time desc,id desc
         </if>
         <if test="orderMode==1">
-            order by type desc, score desc, create_time desc
+            order by type desc, score desc, create_time desc,id desc
+        </if>
+        <if test="orderMode==2">
+            order by type desc, last_comment_time desc, create_time desc,id desc
+        </if>
+        <if test="orderMode==3">
+            and status = 1
+            order by type desc,last_comment_time desc, create_time desc,id desc
         </if>
         limit #{offset}, #{limit}
     </select>
@@ -40,7 +47,7 @@
 
     <insert id="insertDiscussPost" parameterType="DiscussPost" keyProperty="id">
         insert into discuss_post(<include refid="insertFields"></include>)
-        values(#{userId},#{title},#{content},#{contentText},#{type},#{status},#{createTime},#{commentCount},#{score},#{likeCount})
+        values(#{userId},#{title},#{content},#{contentText},#{type},#{status},#{createTime},#{lastCommentTime},#{commentCount},#{score},#{likeCount})
     </insert>
 
     <select id="selectDiscussPostById" resultType="DiscussPost">
@@ -48,12 +55,47 @@
         <include refid="selectFields"></include>
         from discuss_post
         where id = #{id}
+        and status != 2
     </select>
     <select id="selectAllDiscussPosts" resultType="DiscussPost">
         select
         <include refid="selectFields"></include>
         from discuss_post
         where status != 2
+    </select>
+    <select id="selectDiscussPostsCount" resultType="java.lang.Integer">
+        select
+        count(id)
+        from discuss_post
+        where status != 2
+        <if test="orderMode==0">
+            order by type desc, create_time desc,id desc
+        </if>
+        <if test="orderMode==1">
+            order by type desc, score desc, create_time desc,id desc
+        </if>
+        <if test="orderMode==2">
+            order by type desc, last_comment_time desc, create_time desc,id desc
+        </if>
+        <if test="orderMode==3">
+            and status = 1
+            order by type desc,last_comment_time desc, create_time desc,id desc
+        </if>
+    </select>
+    <select id="selectCommendPosts" resultType="DiscussPost">
+        select
+        <include refid="selectFields"></include>
+        from discuss_post
+        where status != 2
+        and comment_count >= 3
+        <if test="commendMode==1">
+            order by last_comment_time desc,id desc
+        </if>
+        <if test="commendMode==2">
+            order by create_time desc,id desc
+        </if>
+
+        limit 0,20
     </select>
 
     <update id="updateCommentCount">
@@ -77,5 +119,21 @@
     <update id="updateContentText">
         update discuss_post set content_text = #{contentText} where id = #{id}
     </update>
+    <update id="updateDiscussPost">
+        update discuss_post
+        set user_id = #{userId},
+        title = #{title},
+        content = #{content},
+        content_text = #{contentText},
+        `type` = #{type},
+        status = #{status},
+        create_time = #{createTime},
+        last_comment_time = #{lastCommentTime},
+        comment_count = #{commentCount},
+        score = #{score},
+        like_count = #{likeCount}
+        where id = #{id}
+    </update>
+
 
 </mapper>

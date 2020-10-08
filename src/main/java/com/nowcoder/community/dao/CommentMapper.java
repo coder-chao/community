@@ -32,4 +32,8 @@ public interface CommentMapper {
 
     int updateStatus(int id,int status);
 
+    int selectCommentCountByPostId(int postId);
+
+    List<Comment> selectNewReply();
+
 }

@@ -9,22 +9,22 @@
     <!--	<meta name="_csrf" th:content="${_csrf.token}">-->
     <!--	<meta name="_csrf_header" th:content="${_csrf.headerName}">-->
 
-    <link rel="icon" href="https://static.nowcoder.com/images/logo_87_87.png" />
+    <link rel="icon" th:href="@{/img/icon.png}" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         crossorigin="anonymous">
     <link rel="stylesheet" th:href="@{/css/global.css}" />
     <link rel="stylesheet" th:href="@{/css/index.css}" />
 
-    <title>牛客网-首页</title>
+    <title>水木社区-首页</title>
 </head>
 
 <body>
     <div class="nk-container">
         <!-- 头部 -->
-        <header class="bg-dark sticky-top" th:fragment="header">
+        <header class="bg-white sticky-top" th:fragment="header">
             <div class="container">
                 <!-- 导航 -->
-                <nav class="navbar navbar-expand-lg navbar-dark">
+                <nav class="navbar navbar-expand-lg ">
                     <!-- logo -->
                     <a class="navbar-brand" href="/"></a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -68,134 +68,174 @@
                         <!-- 搜索 -->
                         <form class="form-inline my-2 my-lg-0" method="get" th:action="@{/search}">
                             <input class="form-control mr-sm-2" type="search" aria-label="Search" name="keyword"
-                                th:value="${keyword}" />
-                            <button class="btn btn-outline-light my-2 my-sm-0" type="submit">搜索</button>
+                                id="search-btn" th:value="${keyword}" />
+                            <button class="btn btn-primary my-2 my-sm-0" type="submit">搜索</button>
                         </form>
                     </div>
                 </nav>
             </div>
         </header>
 
+
         <!-- 内容 -->
         <div class="main">
-            <div class="container">
-               
-                <div class="position-relative">
-                    <!-- 筛选条件 -->
-                    <ul class="nav nav-tabs mb-3">
-                        <li class="nav-item">
-                            <a th:class="|nav-link ${orderMode==0?'active':''}|" th:href="@{/index(orderMode=0)}">最新</a>
-                        </li>
-                        <li class="nav-item">
-                            <a th:class="|nav-link ${orderMode==1?'active':''}|" th:href="@{/index(orderMode=1)}">最热</a>
-                        </li>
-                    </ul>
+            <div class="container fx sb">
+                <div class="post-container">
 
-                    <button type="button" class="btn btn-primary btn-sm position-absolute rt-0"
-                        th:if="${loginUser!=null}">
-                        <a class="post" href="/discuss/write">我要发帖</a>
-                    </button>
+                    <!-- 筛选条件和发帖按钮 -->
+                    <div class="position-relative">
+                        <!-- 筛选条件 -->
+                        <ul class="nav nav-tabs mb-3">
+                            <li class="nav-item">
+                                <a th:class="|nav-link ${orderMode==1?'active':''}|"
+                                    th:href="@{/index(orderMode=1)}">热门帖</a>
+                            </li>
+                            <li class="nav-item">
+                                <a th:class="|nav-link ${orderMode==2?'active':''}|"
+                                    th:href="@{/index(orderMode=2)}">最新回复</a>
+                            </li>
+                            <li class="nav-item">
+                                <a th:class="|nav-link ${orderMode==0?'active':''}|"
+                                    th:href="@{/index(orderMode=0)}">最新发布</a>
+                            </li>
+                            <li class="nav-item">
+                                <a th:class="|nav-link ${orderMode==3?'active':''}|"
+                                    th:href="@{/index(orderMode=3)}">精华帖</a>
+                            </li>
+                        </ul>
 
-                </div>
+                        <button type="button" class="btn btn-primary btn-sm position-absolute rt-0"
+                            th:if="${loginUser!=null}">
+                            <a class="post" href="/discuss/write">我要发帖</a>
+                        </button>
 
-                <!-- 提示框 -->
-                <div class="modal fade" id="hintModal" tabindex="-1" role="dialog" aria-labelledby="hintModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="hintModalLabel">提示</h5>
-                            </div>
-                            <div class="modal-body" id="hintBody">
-                                发布完毕!
+                    </div>
+
+                    <!-- 提示框 -->
+                    <div class="modal fade" id="hintModal" tabindex="-1" role="dialog" aria-labelledby="hintModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="hintModalLabel">提示</h5>
+                                </div>
+                                <div class="modal-body" id="hintBody">
+                                    发布完毕!
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- 帖子列表 -->
-                <ul class="list-unstyled">
-                    <li class="media pb-3 pt-3 mb-3 border-bottom" th:each="map:${discussPosts}">
-                        <a th:href="@{|/user/profile/${map.user.id}|}">
-                            <img th:src="${map.user.headerUrl}" class="mr-4 rounded-circle" alt="用户头像"
-                                style="width:50px;height:50px;">
+                    <!-- 帖子列表 -->
+                    <ul class="list-unstyled">
+                        <li class="media pb-3 pt-3 mb-3 border-bottom" th:each="map:${discussPosts}">
+                            <a th:href="@{|/user/profile/${map.user.id}|}">
+                                <img th:src="${map.user.headerUrl}" class="mr-4 rounded-circle" alt="用户头像"
+                                    style="width:50px;height:50px;">
+                            </a>
+                            <div class="media-body">
+                                <h6 class="mt-0 mb-3">
+                                    <a th:href="@{/discuss/detail/{map.post.id}(map.post.id=${map.post.id},orderMode=0)}"
+                                        th:utext="${map.post.title}">备战春招，面试刷题跟他复习，一个月全搞定！</a>
+                                    <span class="badge badge-secondary bg-primary" th:if="${map.post.type==1}">置顶</span>
+                                    <span class="badge badge-secondary bg-danger"
+                                        th:if="${map.post.status==1}">精华</span>
+                                </h6>
+                                <div class="mb-3 fx">
+
+                                    <img th:if="${map.imgSrc}" th:src="${map.imgSrc}" class="mr-3 post-img" alt="">
+                                    <span th:utext="${#strings.abbreviate(map.post.contentText,125)}">正文</span>
+                                </div>
+                                <div class="text-muted font-size-12">
+                                    <a th:href="@{|/user/profile/${map.user.id}|}">
+                                        <u class="mr-3" th:utext="${map.user.username}">寒江雪</u>
+                                    </a>
+                                    发布于 <b class="time" th:datetime="${#dates.format(map.post.createTime,'yyyy-MM-dd HH:mm:ss')}">2019-04-15 15:32:18</b>
+                                    <ul class="d-inline float-right">
+                                        <li class="d-inline ml-2">赞 <span th:text="${map.likeCount}">11</span></li>
+                                        <li class="d-inline ml-2">回帖 <span th:text="${map.post.commentCount}">7</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <!-- 分页 -->
+                    <nav class="mt-5" th:if="${page.rows>0}" th:fragment="pagination">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item">
+                                <a class="page-link" th:href="@{${page.path}(current=1)}">首页</a>
+                            </li>
+                            <li th:class="|page-item ${page.current==1?'disabled':''}|">
+                                <a class="page-link" th:href="@{${page.path}(current=${page.current-1})}">上一页</a></li>
+                            <li th:class="|page-item ${i==page.current?'active':''}|" th:each="i:${#numbers.sequence(page.from,page.to)}">
+                                <a class="page-link" th:href="@{${page.path}(current=${i})}" th:text="${i}">1</a>
+                            </li>
+                            <li th:class="|page-item ${page.current==page.total?'disabled':''}|">
+                                <a class="page-link" th:href="@{${page.path}(current=${page.current+1})}">下一页</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" th:href="@{${page.path}(current=${page.total})}">末页</a>
+                            </li>
+                        </ul>
+                    </nav>
+               </div>
+               <div class="aside-container">
+                   <p class="text-center my-blue hot-bang">热搜榜</p>
+                    <button type="button" class="mb-3 mr-3  btn btn-sm btn-primary"  th:each="hotword:${hotwordList}">
+                        <a  class="my-white" th:href="@{/search?keyword={keyword}(keyword=${hotword})}" th:utext="${hotword}">
                         </a>
+                    </button>
+                   <div class="text-center my-blue hot-bang mt-5">推荐帖子</div>
+                   <ul class="list-unstyled">
+                    <li class="media pb-2 pt-2 border-bottom " th:each="post:${commendPosts}">
                         <div class="media-body">
-                            <h6 class="mt-0 mb-3">
-                                <a th:href="@{/discuss/detail/{map.post.id}(map.post.id=${map.post.id},orderMode=0)}"
-                                    th:utext="${map.post.title}">备战春招，面试刷题跟他复习，一个月全搞定！</a>
-                                <span class="badge badge-secondary bg-primary" th:if="${map.post.type==1}">置顶</span>
-                                <span class="badge badge-secondary bg-danger" th:if="${map.post.status==1}">精华</span>
-                            </h6>
+                            <div class="mb-3">
+                                <a class="commend-title my-black" th:href="@{/discuss/detail/{id}(id=${post.id},orderMode=0)}" th:utext="${post.title}">标题</a>
+                            </div>
                             <div class="text-muted font-size-12">
-                                <a th:href="@{|/user/profile/${map.user.id}|}">
-                                    <u class="mr-3" th:utext="${map.user.username}">寒江雪</u>
-                                </a>
-                                发布于 <b class="time" th:datetime="${#dates.format(map.post.createTime,'yyyy-MM-dd HH:mm:ss')}">2019-04-15 15:32:18</b>
-								<ul class="d-inline float-right">
-									<li class="d-inline ml-2">赞 <span th:text="${map.likeCount}">11</span></li>
-									<li class="d-inline ml-2">|</li>
-									<li class="d-inline ml-2">回帖 <span th:text="${map.post.commentCount}">7</span></li>
-								</ul>
-							</div>
-						</div>
-					</li>
-				</ul>
-				<!-- 分页 -->
-				<nav class="mt-5" th:if="${page.rows>0}" th:fragment="pagination">
-					<ul class="pagination justify-content-center">
-						<li class="page-item">
-							<a class="page-link" th:href="@{${page.path}(current=1)}">首页</a>
-						</li>
-						<li th:class="|page-item ${page.current==1?'disabled':''}|">
-							<a class="page-link" th:href="@{${page.path}(current=${page.current-1})}">上一页</a></li>
-						<li th:class="|page-item ${i==page.current?'active':''}|" th:each="i:${#numbers.sequence(page.from,page.to)}">
-							<a class="page-link" th:href="@{${page.path}(current=${i})}" th:text="${i}">1</a>
-						</li>
-						<li th:class="|page-item ${page.current==page.total?'disabled':''}|">
-							<a class="page-link" th:href="@{${page.path}(current=${page.current+1})}">下一页</a>
-						</li>
-						<li class="page-item">
-							<a class="page-link" th:href="@{${page.path}(current=${page.total})}">末页</a>
-						</li>
-					</ul>
-				</nav>
+                                发布于 <b class="time" th:datetime="${#dates.format(post.createTime,'yyyy-MM-dd HH:mm:ss')}">2019-04-15 15:32:18</b>
+                                <ul class="d-inline float-right">
+                                    <li class="d-inline ml-2">赞 <span th:text="${post.likeCount}">11</span></li>
+                                    <li class="d-inline ml-2">回帖 <span th:text="${post.commentCount}">7</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                   </ul>
+               </div>
 			</div>
 		</div>
 
 		<!-- 尾部 -->
-		<footer class="bg-dark">
+		<footer class="bg-white">
 			<div class="container">
 				<div class="row">
-					<!-- 二维码 -->
-					<div class="col-4 qrcode">
-						<img src="https://uploadfiles.nowcoder.com/app/app_download.png" class="img-thumbnail" style="width:136px;" />
-					</div>
+					
 					<!-- 公司信息 -->
-					<div class="col-8 detail-info">
+					<div class="col-8 detail-info m-auto">
 						<div class="row">
 							<div class="col">
 								<ul class="nav">
 									<li class="nav-item">
-										<a class="nav-link text-light" href="#">关于我们</a>
+										<a class="nav-link " href="#">关于我们</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link text-light" href="#">加入我们</a>
+										<a class="nav-link " href="#">加入我们</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link text-light" href="#">意见反馈</a>
+										<a class="nav-link " href="#">意见反馈</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link text-light" href="#">企业服务</a>
+										<a class="nav-link " href="#">企业服务</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link text-light" href="#">联系我们</a>
+										<a class="nav-link " href="#">联系我们</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link text-light" href="#">免责声明</a>
+										<a class="nav-link " href="#">免责声明</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link text-light" href="#">友情链接</a>
+										<a class="nav-link " href="#">友情链接</a>
 									</li>
 								</ul>
 							</div>
@@ -203,16 +243,10 @@
 						<div class="row">
 							<div class="col">
 								<ul class="nav btn-group-vertical company-info">
-									<li class="nav-item text-white-50">
-										公司地址：北京市朝阳区大屯路东金泉时代3-2708北京牛客科技有限公司
+									<li class="nav-item ">
+										水木社区©2020 All rights reserved
 									</li>
-									<li class="nav-item text-white-50">
-										联系方式：010-60728802(电话)&nbsp;&nbsp;&nbsp;&nbsp;admin@nowcoder.com
-									</li>
-									<li class="nav-item text-white-50">
-										牛客科技©2018 All rights reserved
-									</li>
-									<li class="nav-item text-white-50">
+									<li class="nav-item ">
 										京ICP备14055008号-4 &nbsp;&nbsp;&nbsp;&nbsp;
 										<img src="http://static.nowcoder.com/company/images/res/ghs.png" style="width:18px;" />
 										京公网安备 11010502036488号

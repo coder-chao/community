@@ -3,13 +3,13 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<link rel="icon" href="https://static.nowcoder.com/images/logo_87_87.png"/>
+	<link rel="icon" th:href="@{/img/icon.png}" />
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
 	<link rel="stylesheet" th:href="@{/css/global.css}" />
 	<link rel="stylesheet" th:href="@{/css/wangEditor.css}" />
 	<link rel="stylesheet" th:href="@{/css/write-post.css}" />
 
-	<title>牛客网-发帖</title>
+	<title>水木社区-发帖</title>
 </head>
 <body>
 	<div class="nk-container">
@@ -63,20 +63,19 @@
 
 		<!-- 内容 -->
 		<div class="main">
-			<div class="container pl-5 pr-5 pt-3 pb-3 mt-3 mb-3">
-				<h3 class="text-center text-info  pb-3">发&nbsp;&nbsp;帖</h3>
+			<div class="container pl-5 pr-5 pt-3 pb-3  mb-3">
+				<h3 class="text-center my-blue  pb-3">发&nbsp;&nbsp;帖</h3>
 				<div class="post-title">
 					<input class="shurukuang" placeholder="请输入标题...">
 				</div>
 				<div id="editor">
 
 				</div>
-<!--				<div>-->
-<!--					<button id="btn1">获取html</button>-->
-<!--					<button id="btn2">获取text</button>-->
-<!--				</div>-->
 
-				<div class="publish" onclick="publish()">发布</div>
+                <div class="fx je">
+                    <div class="publish bg-blue" onclick="publish()">发布</div>
+
+                </div>
 				<!-- 提示框 -->
 				<div class="modal fade" id="hintModal" tabindex="-1" role="dialog" aria-labelledby="hintModalLabel" aria-hidden="true">
 					<div class="modal-dialog modal-lg" role="document">
@@ -95,38 +94,35 @@
 		</div>
 
 		<!-- 尾部 -->
-		<footer class="bg-dark">
+		<footer class="bg-white">
 			<div class="container">
 				<div class="row">
-					<!-- 二维码 -->
-					<div class="col-4 qrcode">
-						<img src="https://uploadfiles.nowcoder.com/app/app_download.png" class="img-thumbnail" style="width:136px;" />
-					</div>
+					
 					<!-- 公司信息 -->
-					<div class="col-8 detail-info">
+					<div class="col-8 detail-info m-auto">
 						<div class="row">
 							<div class="col">
 								<ul class="nav">
 									<li class="nav-item">
-										<a class="nav-link text-light" href="#">关于我们</a>
+										<a class="nav-link " href="#">关于我们</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link text-light" href="#">加入我们</a>
+										<a class="nav-link " href="#">加入我们</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link text-light" href="#">意见反馈</a>
+										<a class="nav-link " href="#">意见反馈</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link text-light" href="#">企业服务</a>
+										<a class="nav-link " href="#">企业服务</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link text-light" href="#">联系我们</a>
+										<a class="nav-link " href="#">联系我们</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link text-light" href="#">免责声明</a>
+										<a class="nav-link " href="#">免责声明</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link text-light" href="#">友情链接</a>
+										<a class="nav-link " href="#">友情链接</a>
 									</li>
 								</ul>
 							</div>
@@ -134,16 +130,10 @@
 						<div class="row">
 							<div class="col">
 								<ul class="nav btn-group-vertical company-info">
-									<li class="nav-item text-white-50">
-										公司地址：北京市朝阳区大屯路东金泉时代3-2708北京牛客科技有限公司
+									<li class="nav-item ">
+										水木社区©2020 All rights reserved
 									</li>
-									<li class="nav-item text-white-50">
-										联系方式：010-60728802(电话)&nbsp;&nbsp;&nbsp;&nbsp;admin@nowcoder.com
-									</li>
-									<li class="nav-item text-white-50">
-										牛客科技©2018 All rights reserved
-									</li>
-									<li class="nav-item text-white-50">
+									<li class="nav-item ">
 										京ICP备14055008号-4 &nbsp;&nbsp;&nbsp;&nbsp;
 										<img src="http://static.nowcoder.com/company/images/res/ghs.png" style="width:18px;" />
 										京公网安备 11010502036488号

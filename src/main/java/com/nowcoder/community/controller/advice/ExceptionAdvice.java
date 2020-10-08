@@ -48,7 +48,7 @@ public class ExceptionAdvice {
             PrintWriter writer = response.getWriter();
             writer.write(CommunityUtil.getJSONString(1, "服务器异常!"));
         } else {
-            response.sendRedirect(request.getContextPath() + "/error");
+            response.sendRedirect(request.getContextPath() + "/500");
         }
     }
 

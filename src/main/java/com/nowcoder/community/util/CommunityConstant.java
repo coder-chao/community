@@ -94,4 +94,12 @@ public interface CommunityConstant {
 
 
     int SIGN_DELETE = 2;
+
+    int ORDER_NEW_PUBLISH = 0;
+    int ORDER_HOT = 1;
+    int ORDER_NEW_REPLY = 2;
+    //首页推荐帖子key
+    int COMMEND_POSTS_KEY = 1;
+    //详情页推荐帖子key
+    int COMMEND_POST_DETAIL_KEY = 2;
 }

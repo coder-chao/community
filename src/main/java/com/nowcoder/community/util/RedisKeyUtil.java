@@ -13,6 +13,7 @@ public class RedisKeyUtil {
     private static final String PREFIX_UV = "uv";
     private static final String PREFIX_DAU = "dau";
     private static final String PREFIX_POST = "post";
+    private static final String PREFIX_HOTWORD = "hotword";
 
     // 某个实体的赞
     // like:entity:entityType:entityId -> set(userId)
@@ -46,6 +47,11 @@ public class RedisKeyUtil {
     // 登录的凭证
     public static String getTicketKey(String ticket) {
         return PREFIX_TICKET + SPLIT + ticket;
+    }
+
+    // 热词
+    public static String getHotWordKey() {
+        return PREFIX_HOTWORD;
     }
 
     // 用户

@@ -3,9 +3,13 @@ package com.nowcoder.community.service;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.nowcoder.community.dao.CommentMapper;
 import com.nowcoder.community.dao.DiscussPostMapper;
 import com.nowcoder.community.entity.DiscussPost;
+import com.nowcoder.community.util.CommunityConstant;
+import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.SensitiveFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
@@ -20,7 +24,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class DiscussPostService {
+public class DiscussPostService implements CommunityConstant {
 
     private static final Logger logger = LoggerFactory.getLogger(DiscussPostService.class);
 
@@ -43,6 +47,12 @@ public class DiscussPostService {
 
     // 帖子总数缓存
     private LoadingCache<Integer, Integer> postRowsCache;
+
+    // 推荐帖子缓存
+    private LoadingCache<Integer, List<DiscussPost>> commendPostsCache;
+
+
+
 
     @PostConstruct
     public void init() {
@@ -84,6 +94,22 @@ public class DiscussPostService {
                         return discussPostMapper.selectDiscussPostRows(key);
                     }
                 });
+        //初始化推荐帖子缓存
+        commendPostsCache =  Caffeine.newBuilder()
+                .maximumSize(maxSize)
+                .expireAfterWrite(expireSeconds, TimeUnit.SECONDS)
+                .build(new CacheLoader<Integer, List<DiscussPost>>() {
+                    @Nullable
+                    @Override
+                    public List<DiscussPost> load(@NonNull Integer commendMode) throws Exception {
+                        if (commendMode != COMMEND_POSTS_KEY && commendMode != COMMEND_POST_DETAIL_KEY ) {
+                            throw new IllegalArgumentException("参数错误!");
+                        }
+                        logger.debug("load commendPosts from DB.");
+                        return discussPostMapper.selectCommendPosts(commendMode);
+                    }
+                });
+
     }
 
     public List<DiscussPost> findDiscussPosts(int userId, int offset, int limit, int orderMode) {
@@ -95,6 +121,10 @@ public class DiscussPostService {
         return discussPostMapper.selectDiscussPosts(userId, offset, limit, orderMode);
     }
 
+    public int findDiscussPostsCount(int orderMode) {
+        return discussPostMapper.selectDiscussPostsCount(orderMode);
+    }
+
     public int findDiscussPostRows(int userId) {
         if (userId == 0) {
             return postRowsCache.get(userId);
@@ -102,6 +132,10 @@ public class DiscussPostService {
 
         logger.debug("load post rows from DB.");
         return discussPostMapper.selectDiscussPostRows(userId);
+    }
+
+    public List<DiscussPost> findCommendPosts(int commendMode){
+        return commendPostsCache.get(commendMode);
     }
 
     public int addDiscussPost(DiscussPost post) {
@@ -139,7 +173,11 @@ public class DiscussPostService {
         return discussPostMapper.updateScore(id, score);
     }
 
-    public int updateLikeCount(int id,int likeCount){
-        return discussPostMapper.updateLikeCount(id,likeCount);
+    public int updateLikeCount(int id, int likeCount) {
+        return discussPostMapper.updateLikeCount(id, likeCount);
+    }
+
+    public int updateDiscussPost(DiscussPost post) {
+        return discussPostMapper.updateDiscussPost(post);
     }
 }

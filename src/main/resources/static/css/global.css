@@ -9,7 +9,9 @@ body {
 	background: #eee;
 	font-family: arial, STHeiti, 'Microsoft YaHei', \5b8b\4f53;
 	font-size: 14px;
-	height: 100%;
+    height: 100%;
+    overflow-y:scroll;
+    overflow-x: hidden;
 }
 
 img{
@@ -23,10 +25,13 @@ img{
     justify-content: center;
 }
 .je{
-    justify-content: end;
+    justify-content:  flex-end; 
 }
 .ac{
     align-items: center;
+}
+.sb{
+    justify-content: space-between;
 }
 
 .nk-container {
@@ -36,26 +41,61 @@ img{
 }
 
 .container {
-	width: 920px;
+    width: 1240px;
     padding: 0;
     
 }
 
+@media (min-width: 1200px){
+    .container {
+        max-width: 1240px;
+    }
+}
+
 .main {
 	padding: 20px 0;
-	padding-bottom: 200px;
+	padding-bottom: 140px;
 }
 
 .main .container {
-	background: #fff;
 	padding: 20px;
-	min-height: 320px;
+    min-height: 320px;
+	background: #fff;
+    
 }
+
+.post-container{
+    width: 900px;
+    padding: 20px;
+    background: #fff;
+
+}
+
+.aside-container{
+    width: 326px;
+    padding: 20px;
+    background: #fff;
+}
+
+#sendModal{
+    margin-top: 28px;
+}
+
+.my-black{
+    color: #212529;
+}
+
+
+
+
+
+
+
 .sticky-top{
 	z-index: 999999;
 }
 header .navbar-brand {
-	background: url('http://static.nowcoder.com/images/res/logo/logo-v3.png') no-repeat;
+	background: url('../img/logo.png') no-repeat;
 	background-size: 147px 42px;
 	width: 147px;
 	height: 42px;
@@ -85,9 +125,9 @@ footer .qrcode {
 	text-align: center;
 }
 
-footer .detail-info{
+/* footer .detail-info{
 	border-left: 1px solid #888;
-}
+} */
 
 footer .company-info li {
 	padding-left: 16px;
@@ -159,6 +199,12 @@ a:hover {
 	background: #eff0f2;
 }
 
+.my-white{
+    color: #fff;
+}
+.bg-white{
+    background: #fff;
+}
 .user-header {
 	width: 50px;
 	height: 50px;
@@ -175,4 +221,27 @@ em {
 
 .arrow{
     display: inline-block;
+}
+
+#search-btn{
+    background: #f6f6f6;
+}
+header{
+    border-bottom: 1px solid #eee;
+}
+
+.my-blue{
+    color: #0084ff;
+}
+.bg-blue{
+    background: #0084ff;
+}
+
+#hintModal{
+    margin-top: 60px;
+    z-index: 999999;
+}
+
+.hot-bang{
+    font-size: 20px;
 }

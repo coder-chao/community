@@ -131,3 +131,15 @@ $('.sort').mouseout(function(){
     $('.btn-list').hide()
 })
 
+function isValid(str) {
+    let num = 0;
+    reg = /<p>(&nbsp;|&nbsp;\s+)+<\/p>|<p>(<br>)+<\/p>/g;
+    while (num < str.length && str != "") {
+        num++;
+        let k = str.match(reg);
+        if (k) {
+            str = str.replace(k[0], "");
+        }
+    }
+    return str !== "";
+}

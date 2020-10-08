@@ -13,6 +13,7 @@ import com.nowcoder.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -36,45 +37,8 @@ public class CommentController implements CommunityConstant {
     @Autowired
     private RedisTemplate redisTemplate;
 
-//    @RequestMapping(path = "/add/{discussPostId}", method = RequestMethod.POST)
-//    public String addComment(@PathVariable("discussPostId") int discussPostId, Comment comment) {
-//        comment.setUserId(hostHolder.getUser().getId());
-//        comment.setStatus(0);
-//        comment.setCreateTime(new Date());
-//        commentService.addComment(comment);
-//
-//        // 触发评论事件
-//        Event event = new Event()
-//                .setTopic(TOPIC_COMMENT)
-//                .setUserId(hostHolder.getUser().getId())
-//                .setEntityType(comment.getEntityType())
-//                .setEntityId(comment.getEntityId())
-//                .setData("postId", discussPostId);
-//        if (comment.getEntityType() == ENTITY_TYPE_POST) {
-//            DiscussPost target = discussPostService.findDiscussPostById(comment.getEntityId());
-//            event.setEntityUserId(target.getUserId());
-//        } else if (comment.getEntityType() == ENTITY_TYPE_COMMENT) {
-//            Comment target = commentService.findCommentById(comment.getEntityId());
-//            event.setEntityUserId(target.getUserId());
-//        }
-//        eventProducer.fireEvent(event);
-//
-//        if (comment.getEntityType() == ENTITY_TYPE_POST) {
-//            // 触发发帖事件
-//            event = new Event()
-//                    .setTopic(TOPIC_PUBLISH)
-//                    .setUserId(comment.getUserId())
-//                    .setEntityType(ENTITY_TYPE_POST)
-//                    .setEntityId(discussPostId);
-//            eventProducer.fireEvent(event);
-//            // 计算帖子分数
-//            String redisKey = RedisKeyUtil.getPostScoreKey();
-//            redisTemplate.opsForSet().add(redisKey, discussPostId);
-//        }
-//
-//        return "redirect:/discuss/detail/" + discussPostId;
-//    }
-
+    //添加评论
+    @Transactional
     @RequestMapping(path = "/add/{discussPostId}", method = RequestMethod.POST)
     @ResponseBody
     public String addComment(@PathVariable("discussPostId") int discussPostId, Comment comment) {
@@ -83,6 +47,11 @@ public class CommentController implements CommunityConstant {
         comment.setCreateTime(new Date());
         comment.setPostId(discussPostId);
         commentService.addComment(comment);
+        //更新帖子的最后评论时间
+        DiscussPost post = discussPostService.findDiscussPostById(discussPostId);
+        post.setLastCommentTime(new Date());
+        post.setCommentCount(post.getCommentCount()+1);
+        discussPostService.updateDiscussPost(post);
 
         // 触发评论事件
         Event event = new Event()
@@ -123,6 +92,7 @@ public class CommentController implements CommunityConstant {
         return CommunityUtil.getJSONString(0, "回复获取成功!");
     }
 
+    @Transactional
     @PostMapping("/delete")
     @ResponseBody
     public String setDelete(int id) {

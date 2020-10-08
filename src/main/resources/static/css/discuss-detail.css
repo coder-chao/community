@@ -43,7 +43,6 @@
     position: absolute;
     top: 30px;
     left: 0;
-    /* padding-left: 15px; */
 }
 
 .btn-list a{
@@ -68,4 +67,26 @@
     -moz-osx-font-smoothing: grayscale;}
 .arrow{
     font-size: 10px;
+}
+
+
+
+.main .container{
+    padding: 0;
+    background: none;
+}
+
+.post-container{
+    padding: 0;
+    background: none;
+}
+
+.post-content{
+    padding: 20px;
+    background: #fff;
+}
+
+.comment-content{
+    padding: 20px;
+    background: #fff;
 }

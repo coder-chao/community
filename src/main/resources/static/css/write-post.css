@@ -29,13 +29,10 @@
     padding-right: 32px;
 }
 .publish{
-    background-color: rgb(154, 24, 38);
-    color: rgb(232, 230, 227);
     display: inline-block;
     width: 128px;
     height: 36px;
     margin-top: 10px;
-    background-color: #c01e2f;
     border-radius: 2px;
     font-size: 14px;
     color: #fff;
@@ -43,3 +40,4 @@
     text-align: center;
     cursor: pointer;
 }
+

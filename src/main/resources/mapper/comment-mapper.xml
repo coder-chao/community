@@ -27,8 +27,10 @@
         where id = #{id}
     </update>
 
+
     <select id="selectCommentsByEntity" resultType="Comment">
-        select <include refid="selectFields"></include>
+        select
+        <include refid="selectFields"></include>
         from comment
         where status = 0
         and entity_type = #{entityType}
@@ -51,12 +53,14 @@
     </insert>
 
     <select id="selectCommentById" resultType="Comment">
-        select <include refid="selectFields"></include>
+        select
+        <include refid="selectFields"></include>
         from comment
         where id = #{id}
     </select>
     <select id="selectCommentByUserId" resultType="Comment">
-        select <include refid="selectFields"></include>
+        select
+        <include refid="selectFields"></include>
         from comment
         where status = 0
         and user_id = #{userId}
@@ -70,7 +74,8 @@
         and user_id = #{userId}
     </select>
     <select id="selectReplysByCommentId" resultType="Comment">
-        select <include refid="selectFields"></include>
+        select
+        <include refid="selectFields"></include>
         from comment
         where status = 0
         and entity_type = 2
@@ -79,24 +84,43 @@
         limit #{offset}, #{limit}
     </select>
     <select id="selectCommentsWithOrder" resultType="Comment">
-        select <include refid="selectFields"></include>
+        select
+        <include refid="selectFields"></include>
         from comment
         where entity_type = #{entityType}
         and entity_id = #{entityId}
         <if test="orderMode==0">
-            order by like_count desc, create_time desc
+            order by like_count desc, create_time desc,id desc
         </if>
         <if test="orderMode==1">
-            order by create_time desc
+            order by create_time desc,id desc
         </if>
         <if test="orderMode==2">
-            order by create_time asc
+            order by create_time asc,id desc
         </if>
         limit #{offset}, #{limit}
     </select>
     <select id="selectAllComments" resultType="Comment">
-        select <include refid="selectFields"></include>
+        select
+        <include refid="selectFields"></include>
         from comment
+    </select>
+    <select id="selectCommentCountByPostId" resultType="java.lang.Integer">
+        select count(id)
+        from comment
+        where post_id = #{postId}
+    </select>
+
+    <resultMap type="Comment" id="CommentMap">
+        <result column="post_id" property="postId"/>
+        <result column="max(create_time)" property="createTime"/>
+    </resultMap>
+
+    <select id="selectNewReply" resultMap="CommentMap">
+        select post_id,max(create_time)
+        from comment
+        group by post_id
+        order by max(create_time) desc
     </select>
 
 

@@ -58,6 +58,7 @@ public class DiscussPostController implements CommunityConstant {
         post.setContent(post.getContent());
         post.setContentText(post.getContentText());
         post.setCreateTime(new Date());
+        post.setLastCommentTime(new Date());
         discussPostService.addDiscussPost(post);
 
         // 触发发帖事件
@@ -86,6 +87,8 @@ public class DiscussPostController implements CommunityConstant {
         }
         model.addAttribute("orderMode", orderMode);
         model.addAttribute("post", post);
+        model.addAttribute("commendPosts", discussPostService.findCommendPosts(COMMEND_POST_DETAIL_KEY));
+
         // 作者
         User user = userService.findUserById(post.getUserId());
         model.addAttribute("user", user);
@@ -97,10 +100,14 @@ public class DiscussPostController implements CommunityConstant {
                 likeService.findEntityLikeStatus(hostHolder.getUser().getId(), ENTITY_TYPE_POST, discussPostId);
         model.addAttribute("likeStatus", likeStatus);
 
+
+
         // 评论分页信息
         page.setLimit(10);
         page.setPath("/discuss/detail/" + discussPostId+"?orderMode="+orderMode);
-        page.setRows(post.getCommentCount());
+        //一级评论数量，用于分页
+        int commentCount = commentService.findCommentCount(ENTITY_TYPE_POST, post.getId());
+        page.setRows(commentCount);
 
         // 评论: 给帖子的评论
         // 回复: 给评论的评论

@@ -3,6 +3,7 @@ package com.nowcoder.community.controller;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.service.ElasticsearchService;
+import com.nowcoder.community.service.HotWordService;
 import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityConstant;
@@ -29,9 +30,15 @@ public class SearchController implements CommunityConstant {
     @Autowired
     private LikeService likeService;
 
+    @Autowired
+    private HotWordService hotWordService;
+
     // search?keyword=xxx
     @RequestMapping(path = "/search", method = RequestMethod.GET)
     public String search(String keyword, Page page, Model model) {
+        //增加redis中关键词搜索的次数
+        hotWordService.increHotWord(keyword);
+
         // 搜索帖子
         org.springframework.data.domain.Page<DiscussPost> searchResult =
                 elasticsearchService.searchDiscussPost(keyword, page.getCurrent() - 1, page.getLimit());

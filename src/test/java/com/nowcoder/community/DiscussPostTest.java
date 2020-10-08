@@ -1,6 +1,8 @@
 package com.nowcoder.community;
 
+import com.nowcoder.community.dao.CommentMapper;
 import com.nowcoder.community.dao.DiscussPostMapper;
+import com.nowcoder.community.entity.Comment;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.Event;
 import com.nowcoder.community.event.EventProducer;
@@ -12,7 +14,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -25,6 +31,8 @@ public class DiscussPostTest implements CommunityConstant {
     @Autowired
     private EventProducer eventProducer;
 
+    @Autowired
+    private CommentMapper commentMapper;
 
 
     @Test
@@ -54,6 +62,66 @@ public class DiscussPostTest implements CommunityConstant {
 
     }
 
+    @Test
+    public void postImgUrc(){
+        String data = discussPostMapper.selectDiscussPostById(334).getContent();
+//        String data = "<img src=\"https://pic3.zhimg.com/v2-caebe48a652e4396664142b56307504a_400x224.jpeg\" alt=\"图片\">";
+        Pattern pattern = Pattern.compile("src=\\\"?(.*?)(\\\"|>|\\\\s+)");
+        Matcher matcher = pattern.matcher(data);
 
+        System.out.println("----------------------");
+        System.out.println(matcher.find() ? matcher.group(1):"没找到");
+        System.out.println("----------------------");
+    }
 
+    @Test
+    public void postCommentCount(){
+        List<DiscussPost> posts = discussPostMapper.selectAllDiscussPosts();
+        for (DiscussPost post : posts){
+            int count = commentMapper.selectCommentCountByPostId(post.getId());
+            discussPostMapper.updateCommentCount(post.getId(),count);
+        }
+    }
+
+    @Test
+    public void postNewReply(){
+//        List<Integer> postIds = commentMapper.selectNewReplyPostIds(0,10);
+//        ArrayList<DiscussPost> list = new ArrayList<>();
+//        postIds.stream().forEach(i->posts.add(discussPostMapper.selectDiscussPostById(i)));
+//        posts.stream().forEach(i-> System.out.println(i.toString()));
+//        for (int i = 0; i < postIds.size(); i++) {
+//            DiscussPost post = discussPostMapper.selectDiscussPostById(postIds.get(i));
+//            list.add(post);
+//
+//        }
+//        System.out.println("-------------------------------------");
+//        for (int i = 0; i < list.size(); i++) {
+//            System.out.println(list.get(i).toString());
+//        }
+//        System.out.println("-------------------------------------");
+    }
+
+    @Test
+    public void postNewReply1(){
+        List<DiscussPost> posts = discussPostMapper.selectAllDiscussPosts();
+      posts.stream().forEach(post->{
+          post.setLastCommentTime(post.getCreateTime());
+          discussPostMapper.updateDiscussPost(post);
+      });
+        List<Comment> comments = commentMapper.selectNewReply();
+        comments.stream().forEach(comment -> {
+            int postId = comment.getPostId();
+            DiscussPost post = discussPostMapper.selectDiscussPostById(postId);
+            if (post != null){
+                post.setLastCommentTime(comment.getCreateTime());
+                discussPostMapper.updateDiscussPost(post);
+            }
+        });
+    }
+
+    @Test
+    public void postNewReply2(){
+        List<DiscussPost> posts = discussPostMapper.selectDiscussPosts(0, 0, 10, 2);
+        posts.stream().forEach(i-> System.out.println(i.toString()));
+    }
 }

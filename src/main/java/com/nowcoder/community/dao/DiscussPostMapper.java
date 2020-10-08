@@ -4,6 +4,7 @@ import com.nowcoder.community.entity.DiscussPost;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -33,5 +34,9 @@ public interface DiscussPostMapper {
 
     int updateContentText(int id, String contentText);
 
+    int updateDiscussPost(DiscussPost post);
 
+    int selectDiscussPostsCount(@Param("orderMode") int orderMode);
+
+    List<DiscussPost> selectCommendPosts(@Param("commendMode") int commendMode);
 }

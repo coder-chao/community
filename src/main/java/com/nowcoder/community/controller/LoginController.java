@@ -5,6 +5,7 @@ import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
+import com.nowcoder.community.util.HostHolder;
 import com.nowcoder.community.util.RedisKeyUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -15,10 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.Cookie;
@@ -46,6 +44,9 @@ public class LoginController implements CommunityConstant {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private HostHolder hostHolder;
 
     @RequestMapping(path = "/register", method = RequestMethod.GET)
     public String getRegisterPage() {
@@ -158,4 +159,33 @@ public class LoginController implements CommunityConstant {
         return "redirect:/login";
     }
 
+    @PostMapping("/password/edit")
+    public String editPassword(String oldPassword,String newPassword,String confirmPassword,Model model,
+                               @CookieValue("ticket") String ticket){
+        User user = hostHolder.getUser();
+        if (user == null) {
+            return "redirect:/login";
+        }
+        if (!newPassword.equals(confirmPassword)){
+            model.addAttribute("errorMsg","两次输入的密码不一致!");
+            model.addAttribute("oldPassword",oldPassword);
+            model.addAttribute("newPassword",newPassword);
+            model.addAttribute("confirmPassword",confirmPassword);
+            return "/site/setting";
+        }
+        //校验旧密码的正确性
+        String old = CommunityUtil.md5(oldPassword+user.getSalt());
+        if (!old.equals(user.getPassword())){
+            model.addAttribute("errorMsg","原密码不正确");
+            model.addAttribute("oldPassword",oldPassword);
+            model.addAttribute("newPassword",newPassword);
+            model.addAttribute("confirmPassword",confirmPassword);
+            return "/site/setting";
+        }
+        //更改密码
+        newPassword = CommunityUtil.md5(newPassword+user.getSalt());
+        userService.updatePassword(user.getId(),newPassword);
+        logout(ticket);
+        return "redirect:/login";
+    }
 }

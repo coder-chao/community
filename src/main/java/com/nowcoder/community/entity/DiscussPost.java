@@ -20,24 +20,6 @@ public class DiscussPost {
     @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String title;
 
-    @Override
-    public String toString() {
-        return "DiscussPost{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", contentText='" + contentText + '\'' +
-                ", type=" + type +
-                ", status=" + status +
-                ", createTime=" + createTime +
-                ", commentCount=" + commentCount +
-                ", score=" + score +
-                ", likeCount=" + likeCount +
-                '}';
-    }
-
-
 
     @Field(type = FieldType.Text)
     private String content;
@@ -54,6 +36,35 @@ public class DiscussPost {
     @Field(type = FieldType.Date)
     private Date createTime;
 
+    @Override
+    public String toString() {
+        return "DiscussPost{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", contentText='" + contentText + '\'' +
+                ", type=" + type +
+                ", status=" + status +
+                ", createTime=" + createTime +
+                ", lastCommentTime=" + lastCommentTime +
+                ", commentCount=" + commentCount +
+                ", score=" + score +
+                ", likeCount=" + likeCount +
+                '}';
+    }
+
+    public Date getLastCommentTime() {
+        return lastCommentTime;
+    }
+
+    public void setLastCommentTime(Date lastCommentTime) {
+        this.lastCommentTime = lastCommentTime;
+    }
+
+    @Field(type = FieldType.Date)
+    private Date lastCommentTime;
+
     @Field(type = FieldType.Integer)
     private int commentCount;
 
@@ -62,6 +73,8 @@ public class DiscussPost {
 
     @Field(type = FieldType.Integer)
     private int likeCount;
+
+
 
     public int getLikeCount() {
         return likeCount;

@@ -1,5 +1,6 @@
 package com.nowcoder.community;
 
+import com.nowcoder.community.util.RedisKeyUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,29 +72,15 @@ public class RedisTests {
         System.out.println(redisTemplate.opsForSet().members(redisKey));
     }
 
-    @Test
-    public void testSortedSets() {
-        String redisKey = "test:students";
 
-        redisTemplate.opsForZSet().add(redisKey, "唐僧", 80);
-        redisTemplate.opsForZSet().add(redisKey, "悟空", 90);
-        redisTemplate.opsForZSet().add(redisKey, "八戒", 50);
-        redisTemplate.opsForZSet().add(redisKey, "沙僧", 70);
-        redisTemplate.opsForZSet().add(redisKey, "白龙马", 60);
-
-        System.out.println(redisTemplate.opsForZSet().zCard(redisKey));
-        System.out.println(redisTemplate.opsForZSet().score(redisKey, "八戒"));
-        System.out.println(redisTemplate.opsForZSet().reverseRank(redisKey, "八戒"));
-        System.out.println(redisTemplate.opsForZSet().reverseRange(redisKey, 0, 2));
-    }
 
     @Test
     public void testKeys() {
-        redisTemplate.delete("test:user");
+        redisTemplate.delete("hotword");
 
-        System.out.println(redisTemplate.hasKey("test:user"));
-
-        redisTemplate.expire("test:students", 10, TimeUnit.SECONDS);
+//        System.out.println(redisTemplate.hasKey("test:user"));
+//
+//        redisTemplate.expire("test:students", 10, TimeUnit.SECONDS);
     }
 
     // 多次访问同一个key
@@ -237,6 +224,45 @@ public class RedisTests {
         System.out.println(redisTemplate.opsForValue().getBit(redisKey, 4));
         System.out.println(redisTemplate.opsForValue().getBit(redisKey, 5));
         System.out.println(redisTemplate.opsForValue().getBit(redisKey, 6));
+    }
+
+    @Test
+    public void testSortedSets() {
+        String redisKey = "test:students";
+
+        redisTemplate.opsForZSet().add(redisKey, "唐僧", 80);
+        redisTemplate.opsForZSet().add(redisKey, "悟空", 90);
+        redisTemplate.opsForZSet().add(redisKey, "八戒", 50);
+        redisTemplate.opsForZSet().add(redisKey, "沙僧", 70);
+        redisTemplate.opsForZSet().add(redisKey, "白龙马", 60);
+
+        System.out.println(redisTemplate.opsForZSet().zCard(redisKey));
+        System.out.println(redisTemplate.opsForZSet().score(redisKey, "八戒"));
+        System.out.println(redisTemplate.opsForZSet().reverseRank(redisKey, "八戒"));
+        System.out.println(redisTemplate.opsForZSet().reverseRange(redisKey, 0, 2));
+    }
+
+    @Test
+    public void hotword(){
+        String redisKey = RedisKeyUtil.getHotWordKey();
+        redisTemplate.opsForZSet().add(redisKey, "RNG", 15);
+        redisTemplate.opsForZSet().add(redisKey, "IG", 10);
+        redisTemplate.opsForZSet().add(redisKey, "FPX", 5);
+        redisTemplate.opsForZSet().add(redisKey, "WE", 3);
+        redisTemplate.opsForZSet().add(redisKey, "ES", 1);
+        redisTemplate.opsForZSet().add(redisKey, "LNG", 2);
+        redisTemplate.opsForZSet().add(redisKey, "JDG", 7);
+        redisTemplate.opsForZSet().add(redisKey, "LGD", 9);
+        redisTemplate.opsForZSet().add(redisKey, "TES", 18);
+        redisTemplate.opsForZSet().add(redisKey, "SN", 4);
+
+        redisTemplate.opsForZSet().incrementScore(redisKey,"RNG",5);
+        System.out.println("----------------------------------------");
+        System.out.println(redisTemplate.opsForZSet().reverseRange(redisKey, 0, 11));
+        System.out.println(redisTemplate.opsForZSet().score(redisKey,"RNG"));
+        System.out.println("----------------------------------------");
+
+
     }
 
 }

@@ -27,6 +27,7 @@
             order by type desc, score desc, create_time desc,id desc
         </if>
         <if test="orderMode==2">
+            and comment_count >= 1
             order by type desc, last_comment_time desc, create_time desc,id desc
         </if>
         <if test="orderMode==3">
@@ -75,6 +76,7 @@
             order by type desc, score desc, create_time desc,id desc
         </if>
         <if test="orderMode==2">
+            and comment_count >= 1
             order by type desc, last_comment_time desc, create_time desc,id desc
         </if>
         <if test="orderMode==3">

@@ -37,8 +37,8 @@ public class ShareController implements CommunityConstant {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
-    @Value("${wk.image.storage}")
-    private String wkImageStorage;
+//    @Value("${wk.image.storage}")
+//    private String wkImageStorage;
 
     /*@Value("${qiniu.bucket.share.url}")
     private String shareBucketUrl;*/
@@ -67,25 +67,25 @@ public class ShareController implements CommunityConstant {
 
     // 废弃
     // 获取长图
-    @RequestMapping(path = "/share/image/{fileName}", method = RequestMethod.GET)
-    public void getShareImage(@PathVariable("fileName") String fileName, HttpServletResponse response) {
-        if (StringUtils.isBlank(fileName)) {
-            throw new IllegalArgumentException("文件名不能为空!");
-        }
-
-        response.setContentType("image/png");
-        File file = new File(wkImageStorage + "/" + fileName + ".png");
-        try {
-            OutputStream os = response.getOutputStream();
-            FileInputStream fis = new FileInputStream(file);
-            byte[] buffer = new byte[1024];
-            int b = 0;
-            while ((b = fis.read(buffer)) != -1) {
-                os.write(buffer, 0, b);
-            }
-        } catch (IOException e) {
-            logger.error("获取长图失败: " + e.getMessage());
-        }
-    }
+//    @RequestMapping(path = "/share/image/{fileName}", method = RequestMethod.GET)
+//    public void getShareImage(@PathVariable("fileName") String fileName, HttpServletResponse response) {
+//        if (StringUtils.isBlank(fileName)) {
+//            throw new IllegalArgumentException("文件名不能为空!");
+//        }
+//
+//        response.setContentType("image/png");
+//        File file = new File(wkImageStorage + "/" + fileName + ".png");
+//        try {
+//            OutputStream os = response.getOutputStream();
+//            FileInputStream fis = new FileInputStream(file);
+//            byte[] buffer = new byte[1024];
+//            int b = 0;
+//            while ((b = fis.read(buffer)) != -1) {
+//                os.write(buffer, 0, b);
+//            }
+//        } catch (IOException e) {
+//            logger.error("获取长图失败: " + e.getMessage());
+//        }
+//    }
 
 }
